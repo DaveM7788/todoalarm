@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/card_view"
+    android:layout_marginRight="1dp"
+    android:layout_marginLeft="1dp"
+    android:layout_marginTop="3dp"
+    android:layout_marginBottom="3dp"
+    card_view:cardCornerRadius="4dp"
+    card_view:cardElevation="3dp"
+    card_view:contentPadding="5dp"
+    android:foreground="?selectableItemBackground"
+    android:clickable="true" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="1dp">
+
+
+        <TextView
+            android:text="Alarm Time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/item_title"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="40dp"
+            android:layout_marginEnd="40dp"
+            android:textSize="20sp" />
+
+        <TextView
+            android:text="Repeats: "
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/item_detail"
+            android:layout_below="@+id/item_title" />
+
+        <Button
+            android:text="X"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:id="@+id/btn_delete" />
+
+        <TextView
+            android:text=""
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:id="@+id/item_id"
+            android:visibility="gone"
+            android:layout_below="@+id/item_title" />
+
+        <Switch
+            android:id="@+id/switch_onoff"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_toLeftOf="@+id/btn_delete"
+            android:layout_toStartOf="@+id/btn_delete" />
+
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>

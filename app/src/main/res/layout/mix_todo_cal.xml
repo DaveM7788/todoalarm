@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.MixTodoCalFrag"
+    >
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabs"
+        android:layout_width="match_parent"
+        android:layout_height="?android:actionBarSize"
+        app:tabTextAppearance="?android:attr/textAppearanceMedium"
+        app:tabGravity="fill"
+        app:tabMode="fixed"
+        android:textAlignment="center"
+        android:gravity="center"
+        app:tabMaxWidth="0dp"
+        app:tabTextColor="@color/colorPrimaryDark"
+        app:tabSelectedTextColor="@color/colorPrimary" />
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/viewpager"
+        android:layout_below="@+id/tabs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</RelativeLayout>

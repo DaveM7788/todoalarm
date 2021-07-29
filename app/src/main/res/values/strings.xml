@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name"> To-Do Alarm </string>
+    <string name="action_settings"> Settings </string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="btn_start"> On </string>
+    <string name="btn_stop"> Off </string>
+    <string name="add_task"> Add Task </string>
+    <string name="task_info"> Enter a new task : ) </string>
+    <string name="first_time_greeting"> Hi! Please set an alarm </string>
+    <string name="done"> X </string>
+    <string name="example"> example </string>
+    <string name="settings_title"> Settings </string>
+    <string name="accept"> Set Name </string>
+    <string name="explain_settings"> Please use the field
+        below to set the name you wish to be greeted with every morning. If you do not
+        wish to be greeted by name, just leave the field blank. </string>
+    <string name="privacy"> Privacy Notice: </string>
+    <string name="open_source"> This app will NOT track your personal information, conversations,
+        or activities. The full source code can be viewed at https://github.com/DaveM7788/alarm-and-todo </string>
+    <string name="todotab">To Do</string>
+    <string name="caltab">Calendar</string>
+    <string name="dialog_about">To-Do Alarm 3.0 by DavesProjects</string>
+    <string name="action_about">About</string>
+    <string name="timer_title">Timer Complete</string>
+</resources>
