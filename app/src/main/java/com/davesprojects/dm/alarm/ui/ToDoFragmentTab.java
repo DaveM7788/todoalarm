@@ -119,8 +119,6 @@ public class ToDoFragmentTab extends Fragment implements View.OnClickListener {
             }
         });
 
-        Log.d("betxxx", "what is fab doing" + fab);
-
         importTasksFromCal();
 
         return myView;
@@ -175,15 +173,16 @@ public class ToDoFragmentTab extends Fragment implements View.OnClickListener {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String task = String.valueOf(taskEditText.getText());
-                        if (checkBoxFlag) {
-                            Intent intent = new Intent(Intent.ACTION_INSERT)
-                                    .setData(CalendarContract.Events.CONTENT_URI)
-                                    .putExtra(CalendarContract.Events.TITLE, task);
-                            startActivityForResult(intent, 198);
-                        } else {
-                            insertTaskDB(task);
+                        if (!task.isEmpty()) {
+                            if (checkBoxFlag) {
+                                Intent intent = new Intent(Intent.ACTION_INSERT)
+                                        .setData(CalendarContract.Events.CONTENT_URI)
+                                        .putExtra(CalendarContract.Events.TITLE, task);
+                                startActivityForResult(intent, 198);
+                            } else {
+                                insertTaskDB(task);
+                            }
                         }
-
                         // also reset the checkbox flag in case user doesn't click on check box again
                         checkBoxFlag = false;
                     }
