@@ -169,7 +169,6 @@ public class WakeUpActivity extends AppCompatActivity implements TextToSpeech.On
             if (prefs.contains("nameOfUser")) {
                 nameOfUser = prefs.getString("nameOfUser", "");
             }
-            //Toast.makeText(con, nameOfUser, Toast.LENGTH_SHORT).show();
             speakAllTasks(nameOfUser);
         }
 

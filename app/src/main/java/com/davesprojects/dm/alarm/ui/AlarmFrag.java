@@ -63,15 +63,6 @@ public class AlarmFrag extends Fragment implements View.OnClickListener {
         prefEditor.putString("lastFrag", "AlarmFrag");
         prefEditor.apply();
 
-
-        // conditions for alarm to be on - need to check pending intent
-        boolean alarmUp = (PendingIntent.getBroadcast(con, 116,
-                new Intent(con, AlarmReceiver.class), PendingIntent.FLAG_NO_CREATE) != null);
-
-        if (!alarmUp) {
-            // Toast.makeText(con, "No Alarms Set", Toast.LENGTH_SHORT).show();
-        }
-
         alarms = dbAlarmRefresh();
 
         nextAlarmTV = myView.findViewById(R.id.nextAlarmTV);
@@ -82,11 +73,6 @@ public class AlarmFrag extends Fragment implements View.OnClickListener {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
 
-        /* dbAutoId matches the id corresponding to the id that a new task would get when
-        // added to the database.  Simply syncs the activity to the db
-        if (!taskId.isEmpty()) {
-            dbAutoId = Integer.valueOf(taskId.get(taskId.size() - 1));
-        } */
         fab = myView.findViewById(R.id.fAB);
         fab.setOnClickListener(this);
 
@@ -98,7 +84,6 @@ public class AlarmFrag extends Fragment implements View.OnClickListener {
                     fab.hide();
                 }
             }
-
 
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
@@ -116,10 +101,6 @@ public class AlarmFrag extends Fragment implements View.OnClickListener {
             }
 
         });
-
-        //String nextAlarmTime = alarmHandler.findNextAlarm();
-        //nextAlarmTV.setText(nextAlarmTime);
-
 
         return myView;
     }

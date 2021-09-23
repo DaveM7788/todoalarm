@@ -16,6 +16,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.viewpager2.widget.ViewPager2;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+
 
 public class MixTodoCalFrag extends Fragment implements View.OnClickListener {
     Context con;
@@ -98,8 +101,7 @@ public class MixTodoCalFrag extends Fragment implements View.OnClickListener {
 
     }
 
-    // screen rotation calls onCreate resets chrono
-    // prevent screen rotation just for this fragment
+    // prevent screen rotation for now
     @Override
     public void onResume() {
         super.onResume();

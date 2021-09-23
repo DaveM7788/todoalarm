@@ -20,7 +20,10 @@
         or activities. The full source code can be viewed at https://github.com/DaveM7788/alarm-and-todo </string>
     <string name="todotab">To Do</string>
     <string name="caltab">Calendar</string>
-    <string name="dialog_about">To-Do Alarm 3.0 by DavesProjects</string>
+    <string name="dialog_about">To-Do Alarm 7.0 by DavesProjects</string>
     <string name="action_about">About</string>
     <string name="timer_title">Timer Complete</string>
+
+    <!-- calendar -->
+    <string name="cal_month_top">%1s %1s</string>
 </resources>

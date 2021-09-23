@@ -124,7 +124,6 @@ public class ToDoFragmentTab extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        //Toast.makeText(con, "click", Toast.LENGTH_SHORT).show();
         int id = view.getId();
         if (id == R.id.fAB) {
             addTask();

@@ -73,8 +73,6 @@ class TimerFrag : Fragment() {
             restartTimer()
         }
 
-
-        //return inflater.inflate(R.layout.timer_layout, container, false)
         return view
     }
 
@@ -238,14 +236,14 @@ class TimerFrag : Fragment() {
     override fun onResume() {
         super.onResume()
         if (activity != null) {
-            activity!!.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+            requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
     }
 
     override fun onPause() {
         super.onPause()
         if (activity != null) {
-            activity!!.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
+            requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
         }
     }
 }

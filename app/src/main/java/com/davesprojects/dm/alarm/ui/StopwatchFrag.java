@@ -49,9 +49,6 @@ public class StopwatchFrag extends Fragment implements View.OnClickListener {
         myView = inflater.inflate(R.layout.stopwatch, container, false);
         con = myView.getContext();
 
-        // needs to start a foreground service similar to RunFaster or stopwatch may lose data
-
-
         // for back stack
         SharedPreferences.Editor prefEditor = con.getSharedPreferences("Preferences",
                 Context.MODE_PRIVATE).edit();
@@ -91,12 +88,7 @@ public class StopwatchFrag extends Fragment implements View.OnClickListener {
                     pauseText = savedInstanceState.getCharSequence("CHRONOTEXT");
                     timerChrono.setText(pauseText);
                     buttonTimer.setText("Resume");
-                    Log.d(TAG, "pause text" + pauseText);
-
-                    //timerChrono.setBase(lastPause);
                 }
-
-                Log.d(TAG, "rotate" + restoreTime);
             }
         }
 

@@ -81,10 +81,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onSaveInstanceState(final Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        // Save the state of item position
-        // outState.putInt(SELECTED_ITEM_POSITION, mPosition);
-        // for back stack
-
         SharedPreferences prefsF = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
         if (prefsF.contains("lastFrag")) {
             String lastFrag = prefsF.getString("lastFrag", "");
@@ -95,9 +91,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onRestoreInstanceState(final Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-
-        // Read the state of item position
-        // mPosition = savedInstanceState.getInt(SELECTED_ITEM_POSITION);
 
         String lastFrag = savedInstanceState.getString("lastFragState");
         FragmentManager fragmentManager = getSupportFragmentManager();

@@ -58,21 +58,13 @@ public class AlarmUpdate {
         // display checkbox with correct id info
         final String[] returnNewData = new String[2];
 
-        AlarmDP alarmDP = null;
-
-        String prtime = "";
         String days = "";
         String time = "";
 
         Cursor cursor = dbH.getOneAlarm(alarmId);
         while (cursor.moveToNext()) {
-            int id = cursor.getColumnIndex("ID3");
-            int idr = cursor.getColumnIndex("PRTIME");
             int idd = cursor.getColumnIndex("DAYS");
             int idt = cursor.getColumnIndex("TIME");
-            int idm = cursor.getColumnIndex("MILTIME");
-            alarmDP = new AlarmDP(cursor.getString(id), cursor.getString(idm), cursor.getString(idd), null);
-            prtime = cursor.getString(idr);
             time = cursor.getString(idt);
             days = cursor.getString(idd);
         }
