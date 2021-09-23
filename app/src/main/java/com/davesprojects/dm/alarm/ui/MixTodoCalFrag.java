@@ -4,25 +4,26 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import com.davesprojects.dm.alarm.R;
 import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentStatePagerAdapter;
-import androidx.viewpager.widget.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.jetbrains.annotations.NotNull;
 import androidx.viewpager2.widget.ViewPager2;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 
 public class MixTodoCalFrag extends Fragment implements View.OnClickListener {
+
     Context con;
     View myView;
+    final private String[] tabTitles = new String[]{"To-Do List", "Calendar", "Quotes"};
 
     @Nullable
     @Override
@@ -33,25 +34,18 @@ public class MixTodoCalFrag extends Fragment implements View.OnClickListener {
 
         TabLayout tabLayout = myView.findViewById(R.id.tabs);
 
-        final ViewPager viewPager = myView.findViewById(R.id.viewpager);
-        FragmentManager fm = getActivity().getSupportFragmentManager();
-        viewPager.setAdapter(new PagerAdapter(fm));
-        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-        tabLayout.setupWithViewPager(viewPager);
+        final ViewPager2 viewPager = myView.findViewById(R.id.viewpager);
+        viewPager.setAdapter(new PagerAdapter(this));
+
+        new TabLayoutMediator(tabLayout, viewPager,
+                new TabLayoutMediator.TabConfigurationStrategy() {
+                    @Override
+                    public void onConfigureTab(@NonNull @NotNull TabLayout.Tab tab, int position) {
+                        tab.setText(tabTitles[position]);
+                    }
+                }
+        ).attach();
         tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-            }
-        });
 
         // for back stack
         SharedPreferences.Editor prefEditor = con.getSharedPreferences("Preferences",
@@ -62,27 +56,15 @@ public class MixTodoCalFrag extends Fragment implements View.OnClickListener {
         return myView;
     }
 
+    public static class PagerAdapter extends FragmentStateAdapter {
 
-    public static class PagerAdapter extends FragmentStatePagerAdapter {
-
-        private PagerAdapter(FragmentManager fm) {
-            super(fm);
+        private PagerAdapter(Fragment fa) {
+            super(fa);
         }
 
-        private String[] tabTitles = new String[]{"To-Do List", "Calendar", "Quotes"};
-
+        @NotNull
         @Override
-        public CharSequence getPageTitle(int position) {
-            return tabTitles[position];
-        }
-
-        @Override
-        public int getCount() {
-            return tabTitles.length;
-        }
-
-        @Override
-        public Fragment getItem(int position) {
+        public Fragment createFragment(int position) {
             switch (position) {
                 case 0:
                     return new ToDoFragmentTab();
@@ -94,7 +76,13 @@ public class MixTodoCalFrag extends Fragment implements View.OnClickListener {
                     return null;
             }
         }
+
+        @Override
+        public int getItemCount() {
+            return 3;
+        }
     }
+
 
     @Override
     public void onClick(View view) {

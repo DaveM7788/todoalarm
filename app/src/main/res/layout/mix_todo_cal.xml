@@ -20,10 +20,10 @@
         app:tabTextColor="@color/colorPrimaryDark"
         app:tabSelectedTextColor="@color/colorPrimary" />
 
-    <androidx.viewpager.widget.ViewPager
+    <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewpager"
         android:layout_below="@+id/tabs"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="match_parent" />
 
 </RelativeLayout>

@@ -110,20 +110,9 @@ public class RecyclerAdapterAlarms extends RecyclerView.Adapter<RecyclerAdapterA
     }
 
     private void updateAt(int i) {
-
         AlarmDP alarm = mAlarms.get(i);
-
         AlarmUpdate alarmUpdate = new AlarmUpdate(mContext, mAlarms, this, i, alarm.getId(), alarmTimeTV);
-        final String[] newData = alarmUpdate.updateAlarm(alarm.getId());
-
-        // mAlarms.set(i, new AlarmDP(alarm.getId(), alarmUpdate.fieldTime, alarmUpdate.fieldDays, "on"));
-        /*
-        AlarmDP newAlarmInfo = new AlarmDP(alarm.getId(), newData[0], newData[1], "on");
-        mAlarms.set(i, newAlarmInfo);
-        notifyItemChanged(i);
-
-         */
-
+        alarmUpdate.updateAlarm(alarm.getId());
     }
 
 

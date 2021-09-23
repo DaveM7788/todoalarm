@@ -22,6 +22,8 @@ import androidx.fragment.app.FragmentManager;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -116,6 +118,8 @@ public class ToDoFragmentTab extends Fragment implements View.OnClickListener {
                 super.onScrollStateChanged(recyclerView, newState);
             }
         });
+
+        Log.d("betxxx", "what is fab doing" + fab);
 
         importTasksFromCal();
 
