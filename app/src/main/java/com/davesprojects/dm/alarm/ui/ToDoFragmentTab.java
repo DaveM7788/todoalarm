@@ -23,7 +23,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -56,7 +55,7 @@ public class ToDoFragmentTab extends Fragment implements View.OnClickListener {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        myView = inflater.inflate(R.layout.activity_card_demo, container, false);
+        myView = inflater.inflate(R.layout.todo_list_w_fab, container, false);
         con = myView.getContext();
 
         // for back stack
@@ -248,7 +247,7 @@ public class ToDoFragmentTab extends Fragment implements View.OnClickListener {
         cursor.close();
         dbH.close();
 
-        ArrayList<String> calTasksForToday = new TodayCalEvents(con).getTodayCalEvents();
+        ArrayList<String> calTasksForToday = new TodayCalEvents(con).getTodayCalEvents(true);
         if (calTasksForToday != null) {
             if (calTasksForToday.size() > 0) {
                 for (String task : calTasksForToday) {

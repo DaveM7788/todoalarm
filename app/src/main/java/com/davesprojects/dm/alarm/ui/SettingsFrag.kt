@@ -14,6 +14,7 @@ import android.widget.AdapterView.OnItemClickListener
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SwitchCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import com.davesprojects.dm.alarm.R
 import com.davesprojects.dm.alarm.util.PermissionsHelper
 import java.util.*
@@ -27,6 +28,7 @@ class SettingsFrag : Fragment(), View.OnClickListener {
     private lateinit var btnAcceptName: Button
     private lateinit var btnResetTasks: Button
     private lateinit var btnChooseSong: Button
+    private lateinit var btnCalOptions: Button
     var nameOfUser: String? = null
     private lateinit var songSwitch: SwitchCompat
     private lateinit var todoSwitch: SwitchCompat
@@ -54,6 +56,9 @@ class SettingsFrag : Fragment(), View.OnClickListener {
         btnResetTasks.setOnClickListener(View.OnClickListener { resetTasks() })
         btnChooseSong = myView.findViewById(R.id.buttonSong)
         btnChooseSong.setOnClickListener(View.OnClickListener { chooseSong() })
+        btnCalOptions = myView.findViewById(R.id.btnChangeCalOpts)
+        btnCalOptions.setOnClickListener(View.OnClickListener { goCalOptions() })
+
         songSwitch = myView.findViewById(R.id.songSwitch)
         songSwitch.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { _, b ->
             if (b) {
@@ -95,6 +100,14 @@ class SettingsFrag : Fragment(), View.OnClickListener {
         permissionsHelper = PermissionsHelper(con, activity)
         permissionsHelper?.checkPermissions()
         return myView
+    }
+
+    private fun goCalOptions() {
+        val fragmentManager: FragmentManager? = activity?.supportFragmentManager
+        fragmentManager?.beginTransaction()
+                ?.addToBackStack("")
+                ?.replace(R.id.content_frame, CalendarOptionsFrag())
+                ?.commit()
     }
 
     private fun saveName() {

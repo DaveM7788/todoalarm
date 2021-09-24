@@ -146,7 +146,7 @@ class CalendarFragmentTab : Fragment(), View.OnClickListener {
     }
 
     private fun setInitialListView() {
-        val calTasksForToday = TodayCalEvents(con).todayCalEvents
+        val calTasksForToday = TodayCalEvents(con).getTodayCalEvents(false)
         if (calTasksForToday.size == 0) {
             calTasksForToday.add("No Calendar Events")
         }

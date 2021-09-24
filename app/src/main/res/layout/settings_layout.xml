@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -13,6 +14,7 @@
             android:layout_height="wrap_content">
 
             <TextView
+                android:textColor="@android:color/black"
                 android:text="@string/settings_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -38,7 +40,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:inputType="textPersonName"
-                    android:hint="Name..."
+                    android:hint="@string/name_hint"
                     android:layout_margin="2sp"
                     android:ems="10"
                     android:id="@+id/editName" />
@@ -48,7 +50,7 @@
                     android:text="@string/accept"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="left"
+                    android:layout_gravity="start"
                     android:id="@+id/btnAcceptName" />
 
             </LinearLayout>
@@ -69,24 +71,24 @@
                 android:weightSum="9">
 
                 <TextView
+                    android:textColor="@android:color/black"
                     android:layout_marginTop="12dp"
                     android:layout_weight="3"
-                    android:text="Tasks completed:"
+                    android:text="@string/tasks_completed"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/blah" />
+                    android:layout_height="wrap_content" />
 
                 <TextView
                     android:layout_marginTop="12dp"
                     android:layout_weight="4"
-                    android:text="     "
+                    android:text=""
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/txtTaskComp" />
 
                 <Button
                     android:layout_weight="2"
-                    android:text="Reset Tasks"
+                    android:text="@string/reset_tasks"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -108,7 +110,7 @@
                 android:layout_marginBottom="9sp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Wake Up to Song" />
+                android:text="@string/wake_up_to_song" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -121,14 +123,14 @@
                     android:id="@+id/textSelectedSong"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Song: None" />
+                    android:text="@string/song_none" />
 
                 <Button
                     android:layout_weight="1"
                     android:id="@+id/buttonSong"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Song" />
+                    android:text="@string/song" />
 
             </LinearLayout>
 
@@ -143,12 +145,10 @@
 
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/todoSwitch"
-                android:layout_margin="5sp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Speak To-Do List" />
+                android:text="@string/speak_todo_list" />
 
-            <!--
 
             <View
                 android:background="@color/colorAccent"
@@ -157,14 +157,38 @@
                 android:layout_marginTop="30dp"
                 android:layout_marginBottom="30dp" />
 
-            <Switch
-                android:id="@+id/colorThemeSwitch"
-                android:layout_margin="5sp"
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Toggle Dark/Light Mode" />
+                android:orientation="horizontal"
+                android:weightSum="9">
 
-                -->
+                <TextView
+                    android:layout_marginTop="12dp"
+                    android:layout_weight="3"
+                    android:text="@string/calendar_options"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/black" />
+
+                <TextView
+                    android:layout_marginTop="12dp"
+                    android:layout_weight="4"
+                    android:text=""
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <Button
+                    android:layout_weight="2"
+                    android:text="@string/change_calendar_options"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:id="@+id/btnChangeCalOpts" />
+
+            </LinearLayout>
+
 
         </LinearLayout>
 

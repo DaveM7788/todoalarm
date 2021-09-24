@@ -145,7 +145,7 @@ public class RecyclerAdapterToDo extends RecyclerView.Adapter<RecyclerAdapterToD
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View v = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.card_layout, viewGroup, false);
+                .inflate(R.layout.todo_card, viewGroup, false);
         return new ViewHolder(v);
     }
 

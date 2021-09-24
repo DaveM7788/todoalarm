@@ -16,8 +16,6 @@
         below to set the name you wish to be greeted with every morning. If you do not
         wish to be greeted by name, just leave the field blank. </string>
     <string name="privacy"> Privacy Notice: </string>
-    <string name="open_source"> This app will NOT track your personal information, conversations,
-        or activities. The full source code can be viewed at https://github.com/DaveM7788/alarm-and-todo </string>
     <string name="todotab">To Do</string>
     <string name="caltab">Calendar</string>
     <string name="dialog_about">To-Do Alarm 7.0 by DavesProjects</string>
@@ -29,4 +27,15 @@
 
     <!-- settings -->
     <string name="song_none">Song: None</string>
+    <string name="song">Song</string>
+    <string name="wake_up_to_song">Wake Up to Song</string>
+    <string name="reset_tasks">Reset Tasks</string>
+    <string name="tasks_completed">Tasks completed:</string>
+    <string name="name_hint">Name…</string>
+    <string name="speak_todo_list">Speak To-Do List</string>
+    <string name="calendar_options">Calendar Options</string>
+    <string name="change_calendar_options">Change</string>
+
+    <!-- calendar options -->
+    <string name="cal_opt_title">Add items from the following calendars to your to-do list</string>
 </resources>
