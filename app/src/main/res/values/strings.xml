@@ -26,4 +26,7 @@
 
     <!-- calendar -->
     <string name="cal_month_top">%1s %1s</string>
+
+    <!-- settings -->
+    <string name="song_none">Song: None</string>
 </resources>
