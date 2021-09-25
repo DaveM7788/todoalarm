@@ -11,7 +11,7 @@ import android.provider.CalendarContract;
 import androidx.annotation.Nullable;
 
 import com.davesprojects.dm.alarm.R;
-import com.davesprojects.dm.alarm.model.TodayCalEvents;
+import com.davesprojects.dm.alarm.model.CalEventHelp;
 import com.davesprojects.dm.alarm.adapters.RecyclerAdapterToDo;
 import com.davesprojects.dm.alarm.db.DBHelper;
 import com.davesprojects.dm.alarm.model.Task;
@@ -247,7 +247,7 @@ public class ToDoFragmentTab extends Fragment implements View.OnClickListener {
         cursor.close();
         dbH.close();
 
-        ArrayList<String> calTasksForToday = new TodayCalEvents(con).getTodayCalEvents(true);
+        ArrayList<String> calTasksForToday = new CalEventHelp(con).getTodayCalEvents(true);
         if (calTasksForToday != null) {
             if (calTasksForToday.size() > 0) {
                 for (String task : calTasksForToday) {

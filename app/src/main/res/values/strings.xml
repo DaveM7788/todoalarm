@@ -6,15 +6,11 @@
     <string name="btn_start"> On </string>
     <string name="btn_stop"> Off </string>
     <string name="add_task"> Add Task </string>
-    <string name="task_info"> Enter a new task : ) </string>
+    <string name="task_info"> Enter a new task </string>
     <string name="first_time_greeting"> Hi! Please set an alarm </string>
     <string name="done"> X </string>
     <string name="example"> example </string>
-    <string name="settings_title"> Settings </string>
     <string name="accept"> Set Name </string>
-    <string name="explain_settings"> Please use the field
-        below to set the name you wish to be greeted with every morning. If you do not
-        wish to be greeted by name, just leave the field blank. </string>
     <string name="privacy"> Privacy Notice: </string>
     <string name="todotab">To Do</string>
     <string name="caltab">Calendar</string>
@@ -24,8 +20,16 @@
 
     <!-- calendar -->
     <string name="cal_month_top">%1s %1s</string>
+    <string name="cal_open_err">Unable to edit this calendar event</string>
+    <string name="month">Month</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <!-- calendar options -->
+    <string name="cal_opt_title">Add items from the following calendars to your to-do list</string>
 
     <!-- settings -->
+    <string name="settings_title"> Settings </string>
     <string name="song_none">Song: None</string>
     <string name="song">Song</string>
     <string name="wake_up_to_song">Wake Up to Song</string>
@@ -35,7 +39,8 @@
     <string name="speak_todo_list">Speak To-Do List</string>
     <string name="calendar_options">Calendar Options</string>
     <string name="change_calendar_options">Change</string>
+    <string name="explain_settings"> Please use the field
+        below to set the name you wish to be greeted with every morning. If you do not
+        wish to be greeted by name, just leave the field blank. </string>
 
-    <!-- calendar options -->
-    <string name="cal_opt_title">Add items from the following calendars to your to-do list</string>
 </resources>

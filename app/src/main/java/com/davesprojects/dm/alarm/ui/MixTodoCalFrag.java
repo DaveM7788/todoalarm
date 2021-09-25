@@ -23,7 +23,7 @@ public class MixTodoCalFrag extends Fragment implements View.OnClickListener {
 
     Context con;
     View myView;
-    final private String[] tabTitles = new String[]{"To-Do List", "Calendar", "Quotes"};
+    final private String[] tabTitles = new String[]{"To-Do List", "Calendar", "Quote"};
 
     @Nullable
     @Override

@@ -11,12 +11,13 @@ import android.widget.AdapterView.OnItemClickListener
 import android.content.ContentUris
 import android.provider.CalendarContract
 import android.content.Intent
-import com.davesprojects.dm.alarm.model.TodayCalEvents
+import com.davesprojects.dm.alarm.model.CalEventHelp
 import android.content.Context
 import android.database.Cursor
 import android.graphics.Color
 import android.view.View
 import android.widget.ListView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.github.sundeepk.compactcalendarview.CompactCalendarView
 import com.github.sundeepk.compactcalendarview.domain.Event
@@ -40,11 +41,21 @@ class CalendarFragmentTab : Fragment(), View.OnClickListener {
     private var times = ArrayList<Long>()
     private var eventIds = ArrayList<Long>()
     private var timezoneDiff = 0
+    private lateinit var textMonthPrev: TextView
+    private lateinit var textMonthNext: TextView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         myView = inflater.inflate(R.layout.calendar_tab, container, false)
         con = myView.context
         textMonth = myView.findViewById(R.id.textMonth)
+        textMonthPrev = myView.findViewById(R.id.textMonthPrev)
+        textMonthPrev.setOnClickListener {
+            compactCalendarView.scrollLeft()
+        }
+        textMonthNext = myView.findViewById(R.id.textMonthNext)
+        textMonthNext.setOnClickListener {
+            compactCalendarView.scrollRight()
+        }
         setInitialMonthTxt()
         compactCalendarView = myView.findViewById(R.id.compactcalendar_view)
         // Set first day of week to Monday, defaults to Monday so calling setFirstDayOfWeek is not necessary
@@ -52,11 +63,12 @@ class CalendarFragmentTab : Fragment(), View.OnClickListener {
         compactCalendarView.setFirstDayOfWeek(Calendar.SUNDAY)
         compactCalendarView.setLocale(TimeZone.getDefault(), Locale.getDefault())
 
+        compactCalendarView.shouldScrollMonth(false)
 
         // define a listener to receive callbacks when certain events happen.
         compactCalendarView.setListener(object : CompactCalendarViewListener {
             override fun onDayClick(dateClicked: Date) {
-                setLVForToday(dateClicked)
+                setLVForDateClick(dateClicked)
             }
 
             override fun onMonthScroll(firstDayOfNewMonth: Date) {
@@ -78,17 +90,22 @@ class CalendarFragmentTab : Fragment(), View.OnClickListener {
         mTaskListView.setOnItemClickListener(OnItemClickListener { _, _, position, _ ->
             val eventTitle = mTaskListView.getItemAtPosition(position).toString()
             if (eventTitle.contains("-")) {
-                // events actually displayed as Time - Event Title
-                // find first index of -
-                // sub string out the text after -
-                // find the text in titles array list, the position of it will match the event id position
-                val needle = titles.indexOf(eventTitle)
-                val eventId = eventIds[needle]
-                val uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId)
-                val intent = Intent(Intent.ACTION_VIEW)
-                        .setData(uri)
-                        .putExtra(CalendarContract.Events.TITLE, false)
-                startActivityForResult(intent, 199) // see OnActivityResult
+                try {
+                    // events actually displayed as Time - Event Title
+                    // find first index of -
+                    // sub string out the text after -
+                    // find the text in titles array list, the position of it will match the event id position
+                    val needle = titles.indexOf(eventTitle)
+                    val eventId = eventIds[needle]
+                    val uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId)
+                    val intent = Intent(Intent.ACTION_VIEW)
+                            .setData(uri)
+                            .putExtra(CalendarContract.Events.TITLE, false)
+                    startActivityForResult(intent, 199) // see OnActivityResult
+                } catch (e: Exception) {
+                    // this can happen if trying to open a calendar event you did not create
+                    Toast.makeText(con, getString(R.string.cal_open_err), Toast.LENGTH_LONG).show()
+                }
             }
         })
         return myView
@@ -105,9 +122,13 @@ class CalendarFragmentTab : Fragment(), View.OnClickListener {
         setInitialListView()
     }
 
-    fun setLVForToday(dateClicked: Date?) {
-        val events = compactCalendarView.getEvents(dateClicked)
-        populateListView(events)
+    fun setLVForDateClick(dateClicked: Date?) {
+        val calTasks = CalEventHelp(con).getCalEventsForADay(false, dateClicked)
+        if (calTasks.size == 0) {
+            calTasks.add("No Calendar Events")
+        }
+
+        resetAdapter(calTasks)
     }
 
     // refresh calendar events after user clicks on an item in the cal task list view
@@ -124,7 +145,7 @@ class CalendarFragmentTab : Fragment(), View.OnClickListener {
         val cal = Calendar.getInstance()
         val year = cal[Calendar.YEAR]
         val month = cal[Calendar.MONTH]
-        textMonth.text = getString(R.string.cal_month_top, monthIntToString(month), (year + 1900).toString())
+        textMonth.text = getString(R.string.cal_month_top, monthIntToString(month), year.toString())
     }
 
     fun monthIntToString(month: Int): String {
@@ -146,37 +167,21 @@ class CalendarFragmentTab : Fragment(), View.OnClickListener {
     }
 
     private fun setInitialListView() {
-        val calTasksForToday = TodayCalEvents(con).getTodayCalEvents(false)
+        val calTasksForToday = CalEventHelp(con).getTodayCalEvents(false)
         if (calTasksForToday.size == 0) {
             calTasksForToday.add("No Calendar Events")
         }
-        if (mAdapter == null) {
-            mAdapter = ArrayAdapter(con, android.R.layout.simple_list_item_activated_1, calTasksForToday)
-            mTaskListView.adapter = mAdapter
-        } else {
-            mAdapter?.clear()
-            mAdapter?.addAll(calTasksForToday)
-            mAdapter?.notifyDataSetChanged()
-        }
+
+        resetAdapter(calTasksForToday)
     }
 
-    private fun populateListView(events: List<Event>) {
-        val oneDayEvents = ArrayList<String>()
-        if (events.isNotEmpty()) {
-            for (i in events.indices) {
-                val temp = events[i]
-                oneDayEvents.add(temp.data.toString())
-                temp.timeInMillis
-            }
-        } else {
-            oneDayEvents.add("No Calendar Events")
-        }
+    private fun resetAdapter(resetEvents: List<String>) {
         if (mAdapter == null) {
-            mAdapter = ArrayAdapter(con, android.R.layout.simple_list_item_activated_1, oneDayEvents)
+            mAdapter = ArrayAdapter(con, android.R.layout.simple_list_item_activated_1, resetEvents)
             mTaskListView.adapter = mAdapter
         } else {
             mAdapter?.clear()
-            mAdapter?.addAll(oneDayEvents)
+            mAdapter?.addAll(resetEvents)
             mAdapter?.notifyDataSetChanged()
         }
     }
@@ -207,7 +212,7 @@ class CalendarFragmentTab : Fragment(), View.OnClickListener {
         } catch (e: SecurityException) {
             e.printStackTrace()
         }
-        getCalendarEvents(id)
+        getCalendarEvents()
     }
 
     private val calendarTimeRange: IntArray
@@ -223,7 +228,7 @@ class CalendarFragmentTab : Fragment(), View.OnClickListener {
             return range
         }
 
-    private fun getCalendarEvents(calID: Long) {
+    private fun getCalendarEvents() {
         val INSTANCE_PROJECTION = arrayOf(
                 CalendarContract.Instances.EVENT_ID,  // 0
                 CalendarContract.Instances.BEGIN,  // 1
@@ -243,8 +248,8 @@ class CalendarFragmentTab : Fragment(), View.OnClickListener {
         beginTime[timeRange[2], timeRange[1] - 1] = timeRange[0]
         val startMillis = beginTime.timeInMillis
         val endTime = Calendar.getInstance()
-        // show 6 months out
-        endTime[timeRange[2], timeRange[1] + 6] = timeRange[0]
+        // show 3 months out
+        endTime[timeRange[2], timeRange[1] + 3] = timeRange[0]
         val endMillis = endTime.timeInMillis
         val contentResolver = con.contentResolver
 
@@ -254,11 +259,15 @@ class CalendarFragmentTab : Fragment(), View.OnClickListener {
         ContentUris.appendId(builder, endMillis)
 
         // Submit the query
-        val cur: Cursor? = contentResolver.query(builder.build(),
-                INSTANCE_PROJECTION,
-                null,
-                null,
-                null)
+        var cur: Cursor? = null
+        try {
+            cur = contentResolver.query(builder.build(),
+                    INSTANCE_PROJECTION,
+                    null,
+                    null,
+                    null)
+        } catch (e: Exception) { }
+
 
         var title: String
         var eventID: Long = 0
@@ -273,7 +282,6 @@ class CalendarFragmentTab : Fragment(), View.OnClickListener {
             eventID = cur.getLong(PROJECTION_ID_INDEX)
             beginVal = cur.getLong(PROJECTION_BEGIN_INDEX)
             title = cur.getString(PROJECTION_TITLE_INDEX)
-            //dtstart = cur.getString(PROJECTION_DTSTART_INDEX);
             startmin = cur.getString(PROJECTION_STARTMINUTE_INDEX)
             tz = cur.getString(PROJECTION_TZ)
 

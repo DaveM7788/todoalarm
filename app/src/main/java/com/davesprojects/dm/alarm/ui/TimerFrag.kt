@@ -43,7 +43,6 @@ class TimerFrag : Fragment() {
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        //super.onCreateView(inflater, container, savedInstanceState)
         val view = inflater.inflate(R.layout.timer_layout, container, false)
         con = view.context
 
@@ -87,8 +86,6 @@ class TimerFrag : Fragment() {
         countDownTimer = object : CountDownTimer(convertEditTextLong(), countDownInterval) {
             override fun onTick(millis: Long) {
                 timeLeft = millis.toInt() / 1000
-
-                //timeLeftTV.text = timeLeft.toString()
                 timeLeftTV.text = convertLongToTV(timeLeft)
             }
 
@@ -111,8 +108,6 @@ class TimerFrag : Fragment() {
         countDownTimer = object : CountDownTimer(timeLeft.toLong() * 1000, countDownInterval) {
             override fun onTick(millis: Long) {
                 timeLeft = millis.toInt() / 1000
-
-                //timeLeftTV.text = timeLeft.toString()
                 timeLeftTV.text = convertLongToTV(timeLeft)
             }
 

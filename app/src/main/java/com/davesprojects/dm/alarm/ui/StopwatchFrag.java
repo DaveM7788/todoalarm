@@ -37,8 +37,6 @@ public class StopwatchFrag extends Fragment implements View.OnClickListener {
 
     CharSequence pauseText;
 
-    private String TAG = "StopwatchFrag";
-
     // SystemClock.elapsedRealtime = returns time since system was booted
     // chrono.getBase   = return the base time as set by setBase(long)
 
