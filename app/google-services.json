@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "591012502918",
+    "project_id": "todoalarm-62561",
+    "storage_bucket": "todoalarm-62561.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:591012502918:android:69ed7ec54031200b7de007",
+        "android_client_info": {
+          "package_name": "com.davesprojects.dm.alarm"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "591012502918-n60fmm602e9m88bqdg9avacvilabb68h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAkiF4_htVCc1lCvHrTZgNP3I3JUF5OKYg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "591012502918-n60fmm602e9m88bqdg9avacvilabb68h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

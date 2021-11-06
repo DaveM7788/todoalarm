@@ -52,8 +52,7 @@ public class AlarmHandler {
         if (alarmManager != null) {
             // recreate the pending intent to cancel it.  This is required any time the user
             // tries to cancel an alarm after they left the original alarm creation activity
-            Intent intent = new Intent(con, AlarmReceiver.class);
-            pendingIntent = PendingIntent.getBroadcast(con, 116, intent, 0);
+            versionSetPendingIntentAlarm();
             alarmManager.cancel(pendingIntent);
         }
 
@@ -189,10 +188,19 @@ public class AlarmHandler {
         return toRet;
     }
 
+    private void versionSetPendingIntentAlarm() {
+        Intent intent = new Intent(con, AlarmReceiver.class);
+        if (Build.VERSION.SDK_INT >= 23) {
+            pendingIntent = PendingIntent.getBroadcast(con, 116, intent, PendingIntent.FLAG_IMMUTABLE);
+        } else {
+            pendingIntent = PendingIntent.getBroadcast(con, 116, intent, 0);
+        }
+    }
+
     private void setNextAlarm(int time) {
         if (time != 0) {
-            Intent intent = new Intent(con, AlarmReceiver.class);
-            pendingIntent = PendingIntent.getBroadcast(con, 116, intent, 0);
+            //Intent intent = new Intent(con, AlarmReceiver.class);
+            versionSetPendingIntentAlarm();
             alarmManager = (AlarmManager) con.getSystemService(Context.ALARM_SERVICE);
             // IntentFilter iF = new IntentFilter(NEXT_ALARM_CLOCK_CHANGED);
 
