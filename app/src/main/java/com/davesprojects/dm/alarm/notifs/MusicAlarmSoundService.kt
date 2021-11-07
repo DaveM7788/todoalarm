@@ -1,0 +1,198 @@
+package com.davesprojects.dm.alarm.notifs
+
+import android.app.Service
+import android.content.Intent
+import android.os.IBinder
+import android.os.Process
+import android.widget.Toast
+
+import android.app.NotificationManager
+
+import android.app.NotificationChannel
+
+import android.os.Build
+
+import android.app.PendingIntent
+import android.content.Context
+import android.content.SharedPreferences
+import android.media.AudioManager
+import android.media.MediaPlayer
+import android.media.Ringtone
+import android.media.RingtoneManager
+import android.net.Uri
+import androidx.core.app.NotificationCompat
+import com.davesprojects.dm.alarm.R
+
+import com.davesprojects.dm.alarm.ui.MainActivity
+import java.lang.Exception
+
+
+class MusicAlarmSoundService : Service() {
+
+    var mBuilder: NotificationCompat.Builder? = null
+    var wakeUpSongDat = ""
+    var ringtone: Ringtone? = null
+    var mp: MediaPlayer? = null
+    val CHANNEL_ID = "todo.alarm.channel.id.1"
+    val notificationId = 106
+    val defaultSoundUri: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+    val vibrationPat = longArrayOf(100, 200, 300, 400)
+    var wakeUpToSong = false
+    var currentVolume = 0
+    var failureCounter = 0
+
+
+    override fun onBind(intent: Intent?): IBinder? {
+        TODO("Not yet implemented")
+    }
+
+    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
+        if (intent.action != null) {   // allows notification to cancel service
+            if (intent.action == "EndService") {
+                // DO NOT PUT ANYTHING ELSE HERE - COULD MESS WITH SERVICE
+                stopMySelf()
+            }
+            return START_NOT_STICKY
+        }
+        println("dp-77 onStartCommand")
+        val extras = intent.extras
+        if (extras != null) {
+
+        }
+        startupSequence()
+        return START_NOT_STICKY
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        playAlarm(baseContext)
+        println("dp-77 on create service")
+    }
+
+    fun startupSequence() {
+        println("dp-77 startup sequence")
+        createNotificationChannel()
+        notifyMaker()
+    }
+
+    fun stopMySelf() {
+        stopForeground(true)
+        stopSelf()
+        stopAllSounds(baseContext)
+
+        // the msg below should not display --- verifies service was stopped
+        Toast.makeText(this@MusicAlarmSoundService, "Stopping alarm sounds $failureCounter", Toast.LENGTH_SHORT)
+            .show()
+        if (failureCounter > 3) Process.killProcess(Process.myPid())
+        failureCounter++
+    }
+
+    fun notifyMaker() {
+        // allows clicking on notification to open app
+        val i = Intent(baseContext, MainActivity::class.java)
+        i.putExtra("goodmorning", "fromwakeup")
+        val pendingIntent =
+            PendingIntent.getActivity(applicationContext, 0, i, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+        val iEnd = Intent(baseContext, MusicAlarmSoundService::class.java)
+        iEnd.action = "EndService"
+        val iEndPending = PendingIntent.getService(this, 0, iEnd, PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+
+        mBuilder = NotificationCompat.Builder(this, CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_alarm_blue)
+            .setContentTitle("To-Do Alarm")
+            .setContentText("Good morning ... or evening")
+            .setContentIntent(pendingIntent)
+            .addAction(R.drawable.ic_alarm_blue, "To-Do List", pendingIntent)
+            .addAction(R.drawable.ic_alarm_blue, "Stop Sound", iEndPending)
+            .setPriority(NotificationCompat.FLAG_ONGOING_EVENT)
+            .setOngoing(true)
+        startForeground(7, mBuilder?.build())
+    }
+
+    private fun createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name: CharSequence = "todoalarmchanname"
+            val description = "todoalarmchandesc"
+            val importance = NotificationManager.IMPORTANCE_HIGH
+            val channel = NotificationChannel(CHANNEL_ID, name, importance)
+            channel.description = description
+            channel.enableVibration(true)
+            channel.vibrationPattern = vibrationPat
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            val notificationManager = getSystemService(
+                NotificationManager::class.java
+            )
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
+    fun playAlarm(context: Context) {
+        val prefs: SharedPreferences = context.getSharedPreferences("Preferences", Context.MODE_PRIVATE)
+        if (prefs.contains("wakeUpToSong")) {
+            wakeUpToSong = prefs.getBoolean("wakeUpToSong", false)
+        }
+        if (prefs.contains("song")) {
+            wakeUpSongDat = prefs.getString("song", "").toString()
+        } else {
+            wakeUpToSong = false
+        }
+        if (wakeUpSongDat.isNotEmpty()) {
+            if (wakeUpSongDat == "") {
+                wakeUpToSong = false
+            }
+        }
+
+        if (wakeUpToSong) {
+            try {
+                val audio = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager?
+                currentVolume = audio!!.getStreamVolume(AudioManager.STREAM_MUSIC)
+                val maxVolume = audio.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+                audio.setStreamVolume(AudioManager.STREAM_MUSIC, maxVolume, 0)
+                mp = MediaPlayer()
+                mp?.reset()
+                mp?.setAudioStreamType(AudioManager.STREAM_MUSIC)
+                mp?.setDataSource(wakeUpSongDat)
+                mp?.prepare()
+                if (mp?.isPlaying == false) {
+                    mp?.start()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        } else {
+            // play an alarm sound! Wake up ; )
+            // ensure ringer volume is maxed. Otherwise alarm won't make any sound if the
+            // user has the phone on vibrate
+            val audio = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager?
+            currentVolume = audio!!.getStreamVolume(AudioManager.STREAM_RING)
+            val maxVolume = audio.getStreamMaxVolume(AudioManager.STREAM_RING)
+            audio.setStreamVolume(AudioManager.STREAM_RING, maxVolume, 0)
+            val uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+            ringtone = RingtoneManager.getRingtone(context, uri)
+            ringtone?.play()
+        }
+    }
+
+    private fun stopAllSounds(context: Context) {
+        println("dp-77 stop all sounds working???")
+        if (ringtone != null) {
+            if (ringtone!!.isPlaying) {
+                println("dp-77 ringtone was playing need to stop it")
+                // return ringtone sound to previous level before activity began
+                val audio = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager?
+                audio!!.setStreamVolume(AudioManager.STREAM_RING, currentVolume, 0)
+                ringtone!!.stop()
+            }
+        }
+        if (mp != null) {
+            println("dp-77 media player was playing need to stop it")
+            val audio = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager?
+            audio!!.setStreamVolume(AudioManager.STREAM_MUSIC, currentVolume, 0)
+            mp!!.stop()
+            mp!!.release()
+        }
+    }
+}

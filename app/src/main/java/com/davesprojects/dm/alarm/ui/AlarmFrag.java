@@ -3,10 +3,8 @@ package com.davesprojects.dm.alarm.ui;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -15,7 +13,6 @@ import androidx.annotation.Nullable;
 
 import com.davesprojects.dm.alarm.model.AlarmDP;
 import com.davesprojects.dm.alarm.util.AlarmHandler;
-import com.davesprojects.dm.alarm.util.AlarmReceiver;
 import com.davesprojects.dm.alarm.R;
 import com.davesprojects.dm.alarm.adapters.RecyclerAdapterAlarms;
 import com.davesprojects.dm.alarm.db.DBHelper;

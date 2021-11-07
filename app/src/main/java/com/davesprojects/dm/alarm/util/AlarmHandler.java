@@ -52,7 +52,7 @@ public class AlarmHandler {
         if (alarmManager != null) {
             // recreate the pending intent to cancel it.  This is required any time the user
             // tries to cancel an alarm after they left the original alarm creation activity
-            versionSetPendingIntentAlarm();
+            versionSetPendingIntentAlarm(0);
             alarmManager.cancel(pendingIntent);
         }
 
@@ -188,10 +188,13 @@ public class AlarmHandler {
         return toRet;
     }
 
-    private void versionSetPendingIntentAlarm() {
+    private void versionSetPendingIntentAlarm(long timeSet) {
         Intent intent = new Intent(con, AlarmReceiver.class);
-        if (Build.VERSION.SDK_INT >= 23) {
-            pendingIntent = PendingIntent.getBroadcast(con, 116, intent, PendingIntent.FLAG_IMMUTABLE);
+        intent.putExtra(UsefulConstants.TIME_FROM_INTENT, timeSet);
+
+        if (Build.VERSION.SDK_INT >= 31) {
+            pendingIntent = PendingIntent.getBroadcast(con, 116, intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         } else {
             pendingIntent = PendingIntent.getBroadcast(con, 116, intent, 0);
         }
@@ -200,24 +203,18 @@ public class AlarmHandler {
     private void setNextAlarm(int time) {
         if (time != 0) {
             //Intent intent = new Intent(con, AlarmReceiver.class);
-            versionSetPendingIntentAlarm();
             alarmManager = (AlarmManager) con.getSystemService(Context.ALARM_SERVICE);
             // IntentFilter iF = new IntentFilter(NEXT_ALARM_CLOCK_CHANGED);
 
             // time must converted from minutes to milliseconds to use setAlarmClock() method
-            long t1 = System.currentTimeMillis();  // returns time since UTC (Midnight Jan 1 1970) in millisecond
-            long t2 = (time * 60 * 1000) + t1;
+            long currentTime = System.currentTimeMillis();  // returns time since UTC (Midnight Jan 1 1970) in millisecond
+            long timeForPending = (time * 60 * 1000) + currentTime;
+            //timeForPending = (10) + currentTime;
+            versionSetPendingIntentAlarm(timeForPending);
 
             if (alarmManager != null) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    alarmManager.setAlarmClock(new AlarmManager.AlarmClockInfo(t2, pendingIntent), pendingIntent);
-                }
-                else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, t2, pendingIntent);
-                }
-                else {
-                    alarmManager.set(AlarmManager.RTC_WAKEUP, t2, pendingIntent);
-                }
+                alarmManager.setAlarmClock(
+                        new AlarmManager.AlarmClockInfo(timeForPending, pendingIntent), pendingIntent);
             }
         }
     }

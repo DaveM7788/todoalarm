@@ -43,4 +43,8 @@
         below to set the name you wish to be greeted with every morning. If you do not
         wish to be greeted by name, just leave the field blank. </string>
 
+    <!-- notif -->
+    <string name="channel_name">todo.alarm.channel.name</string>
+    <string name="channel_description">todo.alarm.channel.desc</string>
+
 </resources>
