@@ -31,7 +31,7 @@ class NotificationHelper {
     val CHANNEL_ID = "todo.alarm.channel.id.1"
     val notificationId = 106
     val defaultSoundUri: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-    val vibrationPat = longArrayOf(100, 200, 300, 400)
+    val vibrationPat = longArrayOf(100, 200, 300, 400, 400, 300, 400)
     var wakeUpToSong = false
     var currentVolume = 0
 

@@ -21,11 +21,12 @@ import android.media.Ringtone
 import android.media.RingtoneManager
 import android.net.Uri
 import androidx.core.app.NotificationCompat
-import com.davesprojects.dm.alarm.R
-
-import com.davesprojects.dm.alarm.ui.MainActivity
+import androidx.core.app.NotificationCompat.VISIBILITY_PUBLIC
+import com.davesprojects.dm.alarm.ui.WakeUpIntermediate
 import java.lang.Exception
 
+import android.graphics.BitmapFactory
+import com.davesprojects.dm.alarm.R
 
 class MusicAlarmSoundService : Service() {
 
@@ -34,16 +35,14 @@ class MusicAlarmSoundService : Service() {
     var ringtone: Ringtone? = null
     var mp: MediaPlayer? = null
     val CHANNEL_ID = "todo.alarm.channel.id.1"
-    val notificationId = 106
     val defaultSoundUri: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-    val vibrationPat = longArrayOf(100, 200, 300, 400)
+    val vibrationPat = longArrayOf(100, 200, 300, 400, 400, 300, 400)
     var wakeUpToSong = false
     var currentVolume = 0
     var failureCounter = 0
 
-
     override fun onBind(intent: Intent?): IBinder? {
-        TODO("Not yet implemented")
+        return null
     }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
@@ -53,11 +52,6 @@ class MusicAlarmSoundService : Service() {
                 stopMySelf()
             }
             return START_NOT_STICKY
-        }
-        println("dp-77 onStartCommand")
-        val extras = intent.extras
-        if (extras != null) {
-
         }
         startupSequence()
         return START_NOT_STICKY
@@ -69,7 +63,7 @@ class MusicAlarmSoundService : Service() {
         println("dp-77 on create service")
     }
 
-    fun startupSequence() {
+    private fun startupSequence() {
         println("dp-77 startup sequence")
         createNotificationChannel()
         notifyMaker()
@@ -89,23 +83,34 @@ class MusicAlarmSoundService : Service() {
 
     fun notifyMaker() {
         // allows clicking on notification to open app
-        val i = Intent(baseContext, MainActivity::class.java)
+        val i = Intent(baseContext, WakeUpIntermediate::class.java)
         i.putExtra("goodmorning", "fromwakeup")
+        i.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_NO_HISTORY
         val pendingIntent =
             PendingIntent.getActivity(applicationContext, 0, i, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+
         val iEnd = Intent(baseContext, MusicAlarmSoundService::class.java)
         iEnd.action = "EndService"
         val iEndPending = PendingIntent.getService(this, 0, iEnd, PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
+        val icon = R.drawable.ic_notification_todo_alarm
+        val iconBitmap = BitmapFactory.decodeResource(
+            baseContext.resources,
+            R.mipmap.ic_launcher
+        )
         mBuilder = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_alarm_blue)
+            .setSmallIcon(icon)
             .setContentTitle("To-Do Alarm")
             .setContentText("Good morning ... or evening")
             .setContentIntent(pendingIntent)
-            .addAction(R.drawable.ic_alarm_blue, "To-Do List", pendingIntent)
-            .addAction(R.drawable.ic_alarm_blue, "Stop Sound", iEndPending)
+            .addAction(R.drawable.ic_alarm_blue, "Stop", pendingIntent)
+            .addAction(R.drawable.ic_alarm_blue, "Open", iEndPending)
             .setPriority(NotificationCompat.FLAG_ONGOING_EVENT)
             .setOngoing(true)
+            .setVibrate(vibrationPat)
+            .setSound(defaultSoundUri)
+            .setVisibility(VISIBILITY_PUBLIC)
+            .setStyle(NotificationCompat.BigPictureStyle().bigPicture(iconBitmap))
         startForeground(7, mBuilder?.build())
     }
 
@@ -120,6 +125,7 @@ class MusicAlarmSoundService : Service() {
             channel.description = description
             channel.enableVibration(true)
             channel.vibrationPattern = vibrationPat
+            channel.setSound(defaultSoundUri, null)
             // Register the channel with the system; you can't change the importance
             // or other notification behaviors after this
             val notificationManager = getSystemService(
@@ -129,7 +135,7 @@ class MusicAlarmSoundService : Service() {
         }
     }
 
-    fun playAlarm(context: Context) {
+    private fun playAlarm(context: Context) {
         val prefs: SharedPreferences = context.getSharedPreferences("Preferences", Context.MODE_PRIVATE)
         if (prefs.contains("wakeUpToSong")) {
             wakeUpToSong = prefs.getBoolean("wakeUpToSong", false)
@@ -177,22 +183,19 @@ class MusicAlarmSoundService : Service() {
     }
 
     private fun stopAllSounds(context: Context) {
-        println("dp-77 stop all sounds working???")
-        if (ringtone != null) {
-            if (ringtone!!.isPlaying) {
-                println("dp-77 ringtone was playing need to stop it")
+        ringtone?.let {
+            if (it.isPlaying) {
                 // return ringtone sound to previous level before activity began
                 val audio = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager?
-                audio!!.setStreamVolume(AudioManager.STREAM_RING, currentVolume, 0)
-                ringtone!!.stop()
+                audio?.setStreamVolume(AudioManager.STREAM_RING, currentVolume, 0)
+                ringtone?.stop()
             }
         }
-        if (mp != null) {
-            println("dp-77 media player was playing need to stop it")
+        mp?.let {
             val audio = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager?
-            audio!!.setStreamVolume(AudioManager.STREAM_MUSIC, currentVolume, 0)
-            mp!!.stop()
-            mp!!.release()
+            audio?.setStreamVolume(AudioManager.STREAM_MUSIC, currentVolume, 0)
+            it.stop()
+            it.release()
         }
     }
 }
