@@ -3,12 +3,8 @@ package com.davesprojects.dm.alarm.util
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.media.AudioManager
-import android.media.RingtoneManager
 import android.os.Build
-import androidx.core.content.ContextCompat.getSystemService
 import com.davesprojects.dm.alarm.notifs.MusicAlarmSoundService
-import com.davesprojects.dm.alarm.notifs.NotificationHelper
 import com.davesprojects.dm.alarm.ui.MainActivity
 import com.davesprojects.dm.alarm.ui.WakeUpActivity
 import kotlin.math.abs

@@ -60,11 +60,9 @@ class MusicAlarmSoundService : Service() {
     override fun onCreate() {
         super.onCreate()
         playAlarm(baseContext)
-        println("dp-77 on create service")
     }
 
     private fun startupSequence() {
-        println("dp-77 startup sequence")
         createNotificationChannel()
         notifyMaker()
     }
@@ -103,8 +101,8 @@ class MusicAlarmSoundService : Service() {
             .setContentTitle("To-Do Alarm")
             .setContentText("Good morning ... or evening")
             .setContentIntent(pendingIntent)
-            .addAction(R.drawable.ic_alarm_blue, "Stop", pendingIntent)
-            .addAction(R.drawable.ic_alarm_blue, "Open", iEndPending)
+            .addAction(R.drawable.ic_alarm_blue, "Stop", iEndPending)
+            .addAction(R.drawable.ic_alarm_blue, "Open", pendingIntent)
             .setPriority(NotificationCompat.FLAG_ONGOING_EVENT)
             .setOngoing(true)
             .setVibrate(vibrationPat)
@@ -126,6 +124,7 @@ class MusicAlarmSoundService : Service() {
             channel.enableVibration(true)
             channel.vibrationPattern = vibrationPat
             channel.setSound(defaultSoundUri, null)
+            channel.lockscreenVisibility = VISIBILITY_PUBLIC
             // Register the channel with the system; you can't change the importance
             // or other notification behaviors after this
             val notificationManager = getSystemService(

@@ -1,10 +1,14 @@
 package com.davesprojects.dm.alarm.ui;
 
+import static android.content.Context.NOTIFICATION_SERVICE;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -20,9 +24,14 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.service.notification.StatusBarNotification;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -38,6 +47,7 @@ public class AlarmFrag extends Fragment implements View.OnClickListener {
     View myView;
     TextView nextAlarmTV;
     FloatingActionButton fab;
+    TextView activeAlarmBtn;
 
     public RecyclerView recyclerView;
     public RecyclerView.LayoutManager layoutManager;
@@ -45,6 +55,7 @@ public class AlarmFrag extends Fragment implements View.OnClickListener {
     ArrayList<AlarmDP> alarms;
     private DBHelper dbH;
     AlarmHandler alarmHandler;
+    LinearLayout layoutActiveAlarm;
 
     @Nullable
     @Override
@@ -63,6 +74,8 @@ public class AlarmFrag extends Fragment implements View.OnClickListener {
         alarms = dbAlarmRefresh();
 
         nextAlarmTV = myView.findViewById(R.id.nextAlarmTV);
+        layoutActiveAlarm = myView.findViewById(R.id.layoutAlarmActive);
+        activeAlarmBtn = myView.findViewById(R.id.activeAlarmBtn);
 
         recyclerView = myView.findViewById(R.id.recycler_view);
         adapter = new RecyclerAdapterAlarms(con, alarms, nextAlarmTV);
@@ -107,6 +120,34 @@ public class AlarmFrag extends Fragment implements View.OnClickListener {
         super.onResume();
         String nextAlarmTime = alarmHandler.findNextAlarm();
         nextAlarmTV.setText(nextAlarmTime);
+
+        boolean isActive = isAlarmActiveNow();
+        if (isActive) {
+            layoutActiveAlarm.setVisibility(View.VISIBLE);
+            activeAlarmBtn.setOnClickListener(v -> {
+                openIntermediate();
+            });
+        } else {
+            layoutActiveAlarm.setVisibility(View.GONE);
+        }
+    }
+
+    private void openIntermediate() {
+        Intent i = new Intent(con, WakeUpIntermediate.class);
+        i.putExtra("goodmorning", "fromwakeup");
+        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
+        con.startActivity(i);
+    }
+
+    private boolean isAlarmActiveNow() {
+        NotificationManager mNotificationManager = (NotificationManager) con.getSystemService(NOTIFICATION_SERVICE);
+        StatusBarNotification[] notifications = mNotificationManager.getActiveNotifications();
+        for (StatusBarNotification notification : notifications) {
+            if (notification.getId() == 7) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public ArrayList<AlarmDP> dbAlarmRefresh() {

@@ -14,6 +14,7 @@ import androidx.core.app.NotificationManagerCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -24,10 +25,8 @@ import java.lang.Exception
 class TimerFrag : Fragment() {
 
     private lateinit var countDownTimer: CountDownTimer
-    private var initialCountDown: Long = 60000 // milliseconds
     private var countDownInterval: Long = 1000
     private var timeLeft = 60
-    private var startOrPause = "Start"
 
     private lateinit var timeLeftTV: TextView
     private lateinit var btnStartPause: Button
@@ -36,7 +35,6 @@ class TimerFrag : Fragment() {
     private lateinit var editTextMin: EditText
     private lateinit var editTextSec: EditText
 
-    private var pausedTime : Long = 0
     private var timerPaused = false
 
     private lateinit var con : Context
@@ -72,7 +70,17 @@ class TimerFrag : Fragment() {
             restartTimer()
         }
 
+        keepScreenOn()
+
         return view
+    }
+
+    private fun removeScreenFlag() {
+        activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+    }
+
+    private fun keepScreenOn() {
+        activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 
     private fun restartTimer() {
@@ -222,6 +230,7 @@ class TimerFrag : Fragment() {
         super.onDestroy()
         try {
             countDownTimer.cancel()
+            removeScreenFlag()
         } catch (e: Exception) {
             e.printStackTrace()
         }

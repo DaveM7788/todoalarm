@@ -120,7 +120,6 @@ class WakeUpIntermediate : AppCompatActivity(), TextToSpeech.OnInitListener {
     }
 
     fun speakAllTasks(nameOfUser: String) {
-        println("dp-77 does speak all tasks run at all???   is tts null $tts")
         // gather info from the task database
         /* if called from onInit via AlarmReceiver, add the greeting.  This is ugly but required.
         This is done because tts doesn't wait until after it's finished speaking to speak another

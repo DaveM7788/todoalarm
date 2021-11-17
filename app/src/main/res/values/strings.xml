@@ -46,5 +46,7 @@
     <!-- notif -->
     <string name="channel_name">todo.alarm.channel.name</string>
     <string name="channel_description">todo.alarm.channel.desc</string>
+    <string name="open">Open</string>
+    <string name="there_is_an_active_alarm">Active alarm going off now</string>
 
 </resources>
