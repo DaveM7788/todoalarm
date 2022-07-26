@@ -51,6 +51,10 @@
                 <action android:name="android.media.browse.MediaBrowserService" />
             </intent-filter>
         </service>
+
+        <service android:name="com.davesprojects.dm.alarm.notifs.StopwatchService"
+            android:exported="true">
+        </service>
     </application>
 
 </manifest>

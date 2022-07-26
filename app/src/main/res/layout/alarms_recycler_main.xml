@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:text="@string/there_is_an_active_alarm" />
 
-        <TextView
+        <Button
             android:textStyle="bold"
             android:textSize="16sp"
             android:textColor="@color/colorPrimary"

@@ -1,17 +1,15 @@
 package com.davesprojects.dm.alarm.ui
 
-import android.content.ContentResolver
 import android.content.ContentUris
 import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.davesprojects.dm.alarm.R
 import android.content.Intent
-import android.content.SharedPreferences
 import android.database.Cursor
-import android.os.Build
 import android.provider.CalendarContract
 import android.speech.tts.TextToSpeech
+import android.view.View
 import android.widget.Toast
 import com.davesprojects.dm.alarm.db.DBHelper
 import com.davesprojects.dm.alarm.notifs.MusicAlarmSoundService
@@ -32,17 +30,24 @@ class WakeUpIntermediate : AppCompatActivity(), TextToSpeech.OnInitListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.intermediate_new_android)
 
+        val prefs = getSharedPreferences("Preferences", MODE_PRIVATE)
+
         btnContinue = findViewById(R.id.btnContinue)
         btnContinue.setOnClickListener {
             killAlarmMusicService()
         }
 
         btnContinueKeepSong = findViewById(R.id.btnContinueKeepPlaying)
-        btnContinueKeepSong.setOnClickListener {
-            intentToMainActivity()
+        if (prefs.contains("wakeUpToSong")) {
+            val wakeUpToSong = prefs.getBoolean("wakeUpToSong", false)
+            if (wakeUpToSong) {
+                btnContinueKeepSong.visibility = View.VISIBLE
+                btnContinueKeepSong.setOnClickListener {
+                    intentToMainActivity()
+                }
+            }
         }
 
-        val prefs = getSharedPreferences("Preferences", MODE_PRIVATE)
         if (prefs.contains("alarmOnOff")) {
             val state = prefs.getBoolean("alarmOnOff", false)
             if (state) {

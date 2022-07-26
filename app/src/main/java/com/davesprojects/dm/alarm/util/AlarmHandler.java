@@ -112,7 +112,7 @@ public class AlarmHandler {
             minuteMil = String.valueOf(minute);
         }
 
-        int milTimeCurrent = Integer.valueOf((hour) + minuteMil);
+        int milTimeCurrent = Integer.parseInt((hour) + minuteMil);
 
         int min = 1440 * 7 + 1;  // 1440 minutes in a day
         for (int i = 0; i < alarmDays.size(); i++) {  // loop through each db entry
@@ -122,7 +122,7 @@ public class AlarmHandler {
                 int multiplier = daysBetween(day, transDayToNum(splitDays[j]));
 
                 // mil time of 1910 - 1810 = 100 (need to consider minutes in a day until a military time)
-                int minutes = minsSinceMidnight(Integer.valueOf(entryTime)) - minsSinceMidnight(milTimeCurrent);
+                int minutes = minsSinceMidnight(Integer.parseInt(entryTime)) - minsSinceMidnight(milTimeCurrent);
 
                 // if statement for alarms scheduled for current day for a past time
                 if (multiplier == 0 && minutes < 0) {
@@ -146,12 +146,10 @@ public class AlarmHandler {
 
     private String tempGetAlarm() {
         long time = 0;
-        if (Build.VERSION.SDK_INT >= 21) {
-            try {
-                AlarmManager.AlarmClockInfo info = alarmManager.getNextAlarmClock();
-                time = info.getTriggerTime();  // guarantees correct time to Android Alarm API level
-            } catch (NullPointerException ignored) {
-            }
+        try {
+            AlarmManager.AlarmClockInfo info = alarmManager.getNextAlarmClock();
+            time = info.getTriggerTime(); // guarantees correct time to Android Alarm API level
+        } catch (NullPointerException ignored) {
         }
 
         Calendar current = Calendar.getInstance();
@@ -202,14 +200,11 @@ public class AlarmHandler {
 
     private void setNextAlarm(int time) {
         if (time != 0) {
-            //Intent intent = new Intent(con, AlarmReceiver.class);
             alarmManager = (AlarmManager) con.getSystemService(Context.ALARM_SERVICE);
-            // IntentFilter iF = new IntentFilter(NEXT_ALARM_CLOCK_CHANGED);
 
             // time must converted from minutes to milliseconds to use setAlarmClock() method
             long currentTime = System.currentTimeMillis();  // returns time since UTC (Midnight Jan 1 1970) in millisecond
             long timeForPending = (time * 60 * 1000) + currentTime;
-            //timeForPending = (10) + currentTime;
             versionSetPendingIntentAlarm(timeForPending);
 
             if (alarmManager != null) {

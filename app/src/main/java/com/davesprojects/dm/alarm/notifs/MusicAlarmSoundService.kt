@@ -30,16 +30,18 @@ import com.davesprojects.dm.alarm.R
 
 class MusicAlarmSoundService : Service() {
 
-    var mBuilder: NotificationCompat.Builder? = null
-    var wakeUpSongDat = ""
-    var ringtone: Ringtone? = null
-    var mp: MediaPlayer? = null
-    val CHANNEL_ID = "todo.alarm.channel.id.1"
-    val defaultSoundUri: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-    val vibrationPat = longArrayOf(100, 200, 300, 400, 400, 300, 400)
-    var wakeUpToSong = false
-    var currentVolume = 0
-    var failureCounter = 0
+    private var mBuilder: NotificationCompat.Builder? = null
+    private var wakeUpSongDat = ""
+    private var ringtone: Ringtone? = null
+    private var mp: MediaPlayer? = null
+    private val CHANNEL_ID = "todo.alarm.channel.id.1"
+    private val defaultSoundUri: Uri = RingtoneManager.getDefaultUri(
+        RingtoneManager.TYPE_NOTIFICATION
+    )
+    private val vibrationPat = longArrayOf(100, 200, 300, 400, 400, 300, 400)
+    private var wakeUpToSong = false
+    private var currentVolume = 0
+    private var failureCounter = 0
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
@@ -59,12 +61,17 @@ class MusicAlarmSoundService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        playAlarm(baseContext)
+        // NOTE: for some reason turning off/on bluetooth triggers onCreate for this service
+        // probably related to this bug - https://issuetracker.google.com/issues/209930562?pli=1
     }
 
     private fun startupSequence() {
         createNotificationChannel()
         notifyMaker()
+        // startupSequence gets called by onStartCommand. which can get called multiple times
+        // so let's stopAllSounds just in case there are any weird situations
+        stopAllSounds(baseContext)
+        playAlarm(baseContext)
     }
 
     fun stopMySelf() {
@@ -79,17 +86,22 @@ class MusicAlarmSoundService : Service() {
         failureCounter++
     }
 
-    fun notifyMaker() {
+    private fun notifyMaker() {
         // allows clicking on notification to open app
         val i = Intent(baseContext, WakeUpIntermediate::class.java)
         i.putExtra("goodmorning", "fromwakeup")
         i.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_NO_HISTORY
-        val pendingIntent =
-            PendingIntent.getActivity(applicationContext, 0, i, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+        val pendingIntent = PendingIntent.getActivity(
+            applicationContext, 0, i,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
 
         val iEnd = Intent(baseContext, MusicAlarmSoundService::class.java)
         iEnd.action = "EndService"
-        val iEndPending = PendingIntent.getService(this, 0, iEnd, PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+        val iEndPending = PendingIntent.getService(
+            this, 0, iEnd,
+            PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
 
         val icon = R.drawable.ic_notification_todo_alarm
         val iconBitmap = BitmapFactory.decodeResource(
@@ -135,7 +147,9 @@ class MusicAlarmSoundService : Service() {
     }
 
     private fun playAlarm(context: Context) {
-        val prefs: SharedPreferences = context.getSharedPreferences("Preferences", Context.MODE_PRIVATE)
+        val prefs: SharedPreferences = context.getSharedPreferences(
+            "Preferences", Context.MODE_PRIVATE
+        )
         if (prefs.contains("wakeUpToSong")) {
             wakeUpToSong = prefs.getBoolean("wakeUpToSong", false)
         }
