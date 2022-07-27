@@ -1,5 +1,8 @@
 package com.davesprojects.dm.alarm.ui;
 
+import static com.davesprojects.dm.alarm.util.UsefulConstKt.STOPWATCH_FRAG;
+import static com.davesprojects.dm.alarm.util.UsefulConstKt.TIMER_FRAG;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -104,10 +107,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     .addToBackStack("")
                     .replace(R.id.content_frame, new MixTodoCalFrag())
                     .commit();
-        } else if (lastFrag.equals("StopwatchFrag")) {
+        } else if (lastFrag.equals(STOPWATCH_FRAG)) {
             fragmentManager.beginTransaction()
                     .addToBackStack("")
                     .replace(R.id.content_frame, new StopwatchFrag())
+                    .commit();
+        } else if (lastFrag.equals(TIMER_FRAG)) {
+            fragmentManager.beginTransaction()
+                    .addToBackStack("")
+                    .replace(R.id.content_frame, new TimerFrag())
                     .commit();
         } else if (lastFrag.equals("SettingsFrag")) {
             fragmentManager.beginTransaction()

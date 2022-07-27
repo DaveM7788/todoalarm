@@ -1,32 +1,24 @@
 package com.davesprojects.dm.alarm.ui
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
+import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.pm.ActivityInfo
-import android.os.Build
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
-import android.os.CountDownTimer
 import androidx.fragment.app.Fragment
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
-import android.widget.Toast
 import com.davesprojects.dm.alarm.R
-import java.lang.Exception
+import com.davesprojects.dm.alarm.notifs.TimerService
+import com.davesprojects.dm.alarm.util.TIMER_FRAG
+import com.davesprojects.dm.alarm.util.backstackHandler
+import com.davesprojects.dm.alarm.util.formatStopwatchTime
 
 class TimerFrag : Fragment() {
-
-    private lateinit var countDownTimer: CountDownTimer
-    private var countDownInterval: Long = 1000
-    private var timeLeft = 60
 
     private lateinit var timeLeftTV: TextView
     private lateinit var btnStartPause: Button
@@ -35,13 +27,17 @@ class TimerFrag : Fragment() {
     private lateinit var editTextMin: EditText
     private lateinit var editTextSec: EditText
 
-    private var timerPaused = false
-
     private lateinit var con : Context
+
+
+    private lateinit var serviceIntent: Intent
+    private var time = 0.0
+    private var timerStarted = false
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.timer_layout, container, false)
+        requireContext().backstackHandler(TIMER_FRAG)
         con = view.context
 
         btnStartPause = view.findViewById(R.id.buttonTimerStartPause)
@@ -51,124 +47,59 @@ class TimerFrag : Fragment() {
         editTextMin = view.findViewById(R.id.editTextMin)
         editTextSec = view.findViewById(R.id.editTextSec)
 
-        btnStartPause.setOnClickListener { v->
-            if (btnStartPause.text.toString().equals("Start")) {
-                btnStartPause.text = "Pause"
-                if (!timerPaused) {
-                    startTimer()
-                } else {
-                    restoreAfterPause()
-                }
-            } else if (btnStartPause.text.toString().equals("Pause")) {
-                btnStartPause.text = "Start"
-                pauseTimer()
-            }
+        btnStartPause.setOnClickListener { startStopCountdown() }
+        btnRestart.setOnClickListener { resetCountdown() }
 
-        }
-
-        btnRestart.setOnClickListener { v->
-            restartTimer()
-        }
-
-        keepScreenOn()
+        serviceIntent = Intent(context, TimerService::class.java)
+        requireContext().registerReceiver(
+            updateCountdown, IntentFilter(TimerService.TIMER_UPDATED)
+        )
 
         return view
     }
 
-    private fun removeScreenFlag() {
-        activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-    }
-
-    private fun keepScreenOn() {
-        activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-    }
-
-    private fun restartTimer() {
-        countDownTimer.cancel()
-        timerPaused = false
-        btnStartPause.text = "Pause"
-        startTimer()
-    }
-
-    private fun startTimer() {
-        countDownTimer = object : CountDownTimer(convertEditTextLong(), countDownInterval) {
-            override fun onTick(millis: Long) {
-                timeLeft = millis.toInt() / 1000
-                timeLeftTV.text = convertLongToTV(timeLeft)
-            }
-
-            override fun onFinish() {
-                endTimer()
+    private val updateCountdown: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            time = intent.getDoubleExtra(TimerService.TIMER_EXTRA, 0.0)
+            timeLeftTV.text = "Time Left: ${time.formatStopwatchTime()}"
+            if (time <= 0.9) {
+                btnStartPause.text = "Start"
+                timerStarted = false
             }
         }
-
-        countDownTimer.start()
-        timerPaused = false
     }
 
-    private fun pauseTimer() {
-        Toast.makeText(context, "Timer Paused", Toast.LENGTH_LONG).show()
-        countDownTimer.cancel()
-        timerPaused = true
+    private fun resetCountdown() {
+        stopCountdown()
+        time = 0.0
+        timeLeftTV.text = time.formatStopwatchTime()
+        startCountdown()
     }
 
-    private fun restoreAfterPause() {
-        countDownTimer = object : CountDownTimer(timeLeft.toLong() * 1000, countDownInterval) {
-            override fun onTick(millis: Long) {
-                timeLeft = millis.toInt() / 1000
-                timeLeftTV.text = convertLongToTV(timeLeft)
-            }
-
-            override fun onFinish() {
-                endTimer()
-            }
+    private fun startStopCountdown() {
+        if (timerStarted) {
+            stopCountdown()
         }
-
-        countDownTimer.start()
-        timerPaused = false
+        else {
+            startCountdown()
+        }
     }
 
-    private fun endTimer() {
-        timerPaused = false
+    private fun startCountdown() {
+        val timeStart = getTotalSecondsRequired()
+        serviceIntent.putExtra(TimerService.TIMER_EXTRA, timeStart)
+        requireContext().startService(serviceIntent)
+        btnStartPause.text = "Stop"
+        timerStarted = true
+    }
 
-        createNotificationChannel()
-        // toast
-        Toast.makeText(context, "Timer Complete", Toast.LENGTH_LONG).show()
-
+    private fun stopCountdown() {
+        requireActivity().stopService(serviceIntent)
         btnStartPause.text = "Start"
-
-        val builder = NotificationCompat.Builder(con, "TODOALARM")
-                .setSmallIcon(R.drawable.ic_timer)
-                .setContentTitle(getString(R.string.timer_title))
-                .setContentText("Timer")
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setDefaults(Notification.DEFAULT_SOUND)
-                .setCategory(NotificationCompat.CATEGORY_REMINDER)
-
-        with(NotificationManagerCompat.from(con)) {
-            // notificationId is a unique int for each notification that you must define
-            notify(119, builder.build())
-        }
+        timerStarted = false
     }
 
-    private fun createNotificationChannel() {
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = "test notify"
-            val descriptionText = "notifictaion description"
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel("TODOALARM", name, importance).apply {
-                description = descriptionText
-            }
-            // Register the channel with the system
-            val notificationManager: NotificationManager =
-                    con.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(channel)
-        }
-    }
-
-    private fun convertEditTextLong() : Long {
+    private fun getTotalSecondsRequired() : Int {
         val hrs = editTextHr.text.toString()
         val mins = editTextMin.text.toString()
         val secs = editTextSec.text.toString()
@@ -186,68 +117,8 @@ class TimerFrag : Fragment() {
             numSecs = secs.toInt()
         }
 
-        val total = ((numHrs * 60 * 60) + (numMins * 60) + (numSecs)) * 1000
+        val total = ((numHrs * 60 * 60) + (numMins * 60) + (numSecs))
 
-        return total.toLong()
-    }
-
-    private fun convertLongToTV(timePass: Int) : String {
-        var time = timePass
-        if (time >= 3600) {
-            val hrs = time / 3600
-            time -= (hrs*3600)
-            val mins = time / 60
-            time -= (mins*60)
-
-            var minsStr = mins.toString()
-            if (mins < 10) {
-                minsStr = "0" + minsStr
-            }
-
-            var secsStr = time.toString()
-            if (time < 10) {
-                secsStr = "0" + secsStr
-            }
-
-            return hrs.toString() + ":" + minsStr + ":" + secsStr
-        } else if (time >= 60) {
-            val mins = time / 60
-            time -= (mins*60)
-
-            var timeStr = time.toString()
-            if (time < 10) {
-                timeStr = "0" + timeStr
-            }
-
-            return mins.toString() + ":" + timeStr
-        } else {
-            return time.toString()
-        }
-    }
-
-
-    override fun onDestroy() {
-        super.onDestroy()
-        try {
-            countDownTimer.cancel()
-            removeScreenFlag()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-
-    }
-
-    override fun onResume() {
-        super.onResume()
-        if (activity != null) {
-            requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        if (activity != null) {
-            requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
-        }
+        return total
     }
 }

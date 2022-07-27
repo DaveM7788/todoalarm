@@ -27,6 +27,7 @@ import java.lang.Exception
 
 import android.graphics.BitmapFactory
 import com.davesprojects.dm.alarm.R
+import com.davesprojects.dm.alarm.util.ALARM_NOTIFY_ID
 
 class MusicAlarmSoundService : Service() {
 
@@ -80,7 +81,7 @@ class MusicAlarmSoundService : Service() {
         stopAllSounds(baseContext)
 
         // the msg below should not display --- verifies service was stopped
-        Toast.makeText(this@MusicAlarmSoundService, "Stopping alarm sounds $failureCounter", Toast.LENGTH_SHORT)
+        Toast.makeText(this@MusicAlarmSoundService, "Stopping alarm sounds", Toast.LENGTH_SHORT)
             .show()
         if (failureCounter > 3) Process.killProcess(Process.myPid())
         failureCounter++
@@ -121,7 +122,7 @@ class MusicAlarmSoundService : Service() {
             .setSound(defaultSoundUri)
             .setVisibility(VISIBILITY_PUBLIC)
             .setStyle(NotificationCompat.BigPictureStyle().bigPicture(iconBitmap))
-        startForeground(7, mBuilder?.build())
+        startForeground(ALARM_NOTIFY_ID, mBuilder?.build())
     }
 
     private fun createNotificationChannel() {

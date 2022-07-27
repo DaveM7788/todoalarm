@@ -3,6 +3,7 @@
 android:orientation="vertical" android:layout_width="match_parent"
 android:layout_height="match_parent">
 
+    <!--
 <Chronometer
     android:textSize="40sp"
     android:layout_centerHorizontal="true"
@@ -11,33 +12,44 @@ android:layout_height="match_parent">
     android:id="@+id/stopWatchChrono"
     android:layout_width="match_parent"
     android:layout_height="wrap_content" />
+    -->
 
-<LinearLayout
-    android:layout_marginTop="20sp"
-    android:gravity="center"
-    android:layout_centerHorizontal="true"
-    android:layout_below="@+id/stopWatchChrono"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-
-    android:orientation="horizontal">
-
-    <Button
+    <TextView
+        android:text="00:00:00"
+        android:textSize="40sp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
         android:gravity="center"
-        android:layout_gravity="center"
-        android:id="@+id/buttonStopwatch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="10sp"
-        android:text="Start" />
+        android:id="@+id/stopWatchTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
-    <Button
+    <LinearLayout
+        android:layout_marginTop="20sp"
         android:gravity="center"
-        android:layout_gravity="center"
-        android:id="@+id/buttonResumeStopWatch"
-        android:layout_width="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/stopWatchTV"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10sp"
-        android:text="Restart" />
-</LinearLayout>
+        android:orientation="horizontal">
+
+        <Button
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:id="@+id/buttonStartStop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10sp"
+            android:text="Start" />
+
+        <Button
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:id="@+id/buttonRestart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10sp"
+            android:text="Restart" />
+    </LinearLayout>
+
 </RelativeLayout>

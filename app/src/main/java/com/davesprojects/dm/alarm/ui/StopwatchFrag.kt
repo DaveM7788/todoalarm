@@ -1,162 +1,85 @@
 package com.davesprojects.dm.alarm.ui
 
-import android.content.Context
-import android.content.Intent
-import android.widget.Chronometer
+import android.content.*
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.os.Bundle
 import com.davesprojects.dm.alarm.R
-import android.content.SharedPreferences
-import android.content.pm.ActivityInfo
-import android.os.Build
-import android.os.SystemClock
 import android.view.View
 import android.widget.Button
+import android.widget.TextView
 import androidx.fragment.app.Fragment
-import com.davesprojects.dm.alarm.notifs.MusicAlarmSoundService
 import com.davesprojects.dm.alarm.notifs.StopwatchService
+import com.davesprojects.dm.alarm.util.STOPWATCH_FRAG
+import com.davesprojects.dm.alarm.util.backstackHandler
+import com.davesprojects.dm.alarm.util.formatStopwatchTime
 
 /**
  * Created by blue on 12/30/2017.
  */
-class StopwatchFrag : Fragment(), View.OnClickListener {
-    lateinit var con: Context
-    lateinit var myView: View
-    lateinit var timerChrono: Chronometer
-    lateinit var buttonTimer: Button
-    lateinit var buttonResumeTimer: Button
-    var chronoOn = false
-    var paused = false
-    private var lastPause: Long = 0
-    var wasRestored = false
-    var restoreTime: Long = 0
-    var pauseText: CharSequence? = null
+class StopwatchFrag : Fragment()  {
 
-    // SystemClock.elapsedRealtime = returns time since system was booted
-    // chrono.getBase   = return the base time as set by setBase(long)
+    private var timerStarted = false
+    private lateinit var serviceIntent: Intent
+    private var time = 0.0
+
+    private lateinit var startStopButton: Button
+    lateinit var resetButton: Button
+    lateinit var timeTV: TextView
+    private lateinit var myView: View
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         myView = inflater.inflate(R.layout.stopwatch, container, false)
-        con = requireContext()
+        requireContext().backstackHandler(STOPWATCH_FRAG)
 
-        // for back stack
-        val prefEditor = con.getSharedPreferences(
-            "Preferences",
-            Context.MODE_PRIVATE
-        ).edit()
-        prefEditor.putString("lastFrag", "StopwatchFrag")
-        prefEditor.apply()
-        timerChrono = myView.findViewById(R.id.stopWatchChrono)
-        buttonTimer = myView.findViewById(R.id.buttonStopwatch)
-        buttonTimer.setOnClickListener(View.OnClickListener { firstButtonStopWatch() })
-        buttonResumeTimer = myView.findViewById(R.id.buttonResumeStopWatch)
-        buttonResumeTimer.setOnClickListener(View.OnClickListener { restartStopWatch() })
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey("CHRONO")) {
-                restoreTime = savedInstanceState.getLong("CHRONO")
-                paused = savedInstanceState.getBoolean("CHRONOPAUSED")
-                wasRestored = true
-                if (!paused) {
-                    chronoOn = true
-                    buttonTimer.setText("Pause")
-                    timerChrono.setBase(restoreTime)
-                    timerChrono.start()
-                } else {
-                    lastPause = savedInstanceState.getLong("LASTPAUSE")
-                    pauseText = savedInstanceState.getCharSequence("CHRONOTEXT")
-                    timerChrono.setText(pauseText)
-                    buttonTimer.setText("Resume")
-                }
-            }
-        }
+        startStopButton = myView.findViewById(R.id.buttonStartStop)
+        startStopButton.setOnClickListener { startStopTimer() }
+        resetButton = myView.findViewById(R.id.buttonRestart)
+        resetButton.setOnClickListener { resetTimer() }
+        timeTV = myView.findViewById(R.id.stopWatchTV)
+
+        serviceIntent = Intent(context, StopwatchService::class.java)
+        requireContext().registerReceiver(
+            updateTime, IntentFilter(StopwatchService.STOPWATCH_UPDATED)
+        )
+
         return myView
     }
 
-    override fun onClick(view: View) {
-        // required override
+    private fun resetTimer() {
+        stopTimer()
+        time = 0.0
+        timeTV.text = time.formatStopwatchTime()
     }
 
-    private fun foregroundService() {
-        val serviceIntent = Intent(context, StopwatchService::class.java)
-        if (Build.VERSION.SDK_INT >= 26) con.startForegroundService(serviceIntent)
-        else con.startService(serviceIntent)
+    private fun startStopTimer() {
+        if (timerStarted)
+            stopTimer()
+        else
+            startTimer()
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        // handle screen rotation (which normally resets chrono = bad!)
-        outState.putLong("CHRONO", timerChrono.base)
-        outState.putBoolean("CHRONOPAUSED", paused)
-        outState.putLong("LASTPAUSE", lastPause)
-        outState.putCharSequence("CHRONOTEXT", timerChrono.text)
+    private fun startTimer() {
+        serviceIntent.putExtra(StopwatchService.TIME_EXTRA, time)
+        requireContext().startService(serviceIntent)
+        startStopButton.text = "Stop"
+        timerStarted = true
     }
 
-    fun firstButtonStopWatch() {
-        if (!chronoOn) {
-            if (!paused) {
-                startStopWatch()
-            } else {
-                resumeStopWatch()
-            }
-        } else {
-            pauseStopWatch()
-        }
+    private fun stopTimer() {
+        requireActivity().stopService(serviceIntent)
+        startStopButton.text = "Start"
+        timerStarted = false
     }
 
-    fun startStopWatch() {
-        chronoOn = true
-        buttonTimer.text = "Pause"
-        timerChrono.base = SystemClock.elapsedRealtime()
-        timerChrono.start()
-    }
-
-    fun restartStopWatch() {
-        chronoOn = true
-        paused = false
-        wasRestored = false
-        timerChrono.base = SystemClock.elapsedRealtime()
-        timerChrono.start()
-        buttonTimer.text = "Pause"
-    }
-
-    fun pauseStopWatch() {
-        buttonTimer.text = "Resume"
-        lastPause = SystemClock.elapsedRealtime()
-        timerChrono.stop()
-        paused = true
-        chronoOn = false
-    }
-
-    fun resumeStopWatch() {
-        buttonTimer.text = "Pause"
-        chronoOn = true
-        paused = false
-        if (!wasRestored) {
-            timerChrono.base = timerChrono!!.base + SystemClock.elapsedRealtime() - lastPause
-        } else {
-            timerChrono.base = restoreTime + SystemClock.elapsedRealtime() - lastPause
-            wasRestored = false
-        }
-        timerChrono.start()
-    }
-
-    // screen rotation calls onCreate resets chrono
-    // prevent screen rotation just for this fragment
-    override fun onResume() {
-        super.onResume()
-        if (activity != null) {
-            requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        if (activity != null) {
-            requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
+    private val updateTime: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            time = intent.getDoubleExtra(StopwatchService.TIME_EXTRA, 0.0)
+            timeTV.text = time.formatStopwatchTime()
         }
     }
 }
