@@ -11,7 +11,6 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.davesprojects.dm.alarm.notifs.StopwatchService
 import com.davesprojects.dm.alarm.util.STOPWATCH_FRAG
-import com.davesprojects.dm.alarm.util.STOPWATCH_IS_ON
 import com.davesprojects.dm.alarm.util.backstackHandler
 import com.davesprojects.dm.alarm.util.formatStopwatchTime
 
