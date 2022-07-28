@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.davesprojects.dm.alarm.notifs.StopwatchService
 import com.davesprojects.dm.alarm.util.STOPWATCH_FRAG
+import com.davesprojects.dm.alarm.util.STOPWATCH_IS_ON
 import com.davesprojects.dm.alarm.util.backstackHandler
 import com.davesprojects.dm.alarm.util.formatStopwatchTime
 
@@ -80,6 +81,8 @@ class StopwatchFrag : Fragment()  {
         override fun onReceive(context: Context, intent: Intent) {
             time = intent.getDoubleExtra(StopwatchService.TIME_EXTRA, 0.0)
             timeTV.text = time.formatStopwatchTime()
+            startStopButton.text = "Stop"
+            timerStarted = true
         }
     }
 }

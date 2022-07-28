@@ -65,6 +65,9 @@ class TimerFrag : Fragment() {
             if (time <= 0.9) {
                 btnStartPause.text = "Start"
                 timerStarted = false
+            } else {
+                btnStartPause.text = "Stop"
+                timerStarted = true
             }
         }
     }
