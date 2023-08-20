@@ -3,15 +3,19 @@ package com.davesprojects.dm.alarm.ui;
 import static android.content.Context.NOTIFICATION_SERVICE;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import android.Manifest;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
 
@@ -112,6 +116,8 @@ public class AlarmFrag extends Fragment implements View.OnClickListener {
 
         });
 
+        getNotifyPermissions();
+
         return myView;
     }
 
@@ -177,6 +183,10 @@ public class AlarmFrag extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
         int id = view.getId();
         if (id == R.id.fAB) {
+            if (!hasNotifyPermissions()) {
+                getNotifyPermissions();
+                return;
+            }
             addAlarm();
         }
     }
@@ -378,6 +388,26 @@ public class AlarmFrag extends Fragment implements View.OnClickListener {
         super.onDestroy();
         if (dbH != null) {
             dbH.close();
+        }
+    }
+
+    private boolean hasNotifyPermissions() {
+        int notifications = PackageManager.PERMISSION_GRANTED;
+
+        if (Build.VERSION.SDK_INT >= 33) {
+            notifications = ContextCompat.checkSelfPermission(
+                    requireContext(), Manifest.permission.POST_NOTIFICATIONS);
+        }
+
+        return notifications == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void getNotifyPermissions() {
+        if (Build.VERSION.SDK_INT >= 33) {
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_DENIED) {
+                String[] permissions = {Manifest.permission.POST_NOTIFICATIONS};
+                requestPermissions(permissions, 97);
+            }
         }
     }
 }
