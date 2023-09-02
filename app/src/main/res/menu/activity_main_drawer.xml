@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_alarm"
@@ -9,14 +11,6 @@
             android:id="@+id/nav_todolist"
             android:icon="@drawable/ic_todolist"
             android:title="To-Do List" />
-
-        <!--
-        <item
-            android:id="@+id/nav_timer"
-            android:icon="@drawable/ic_stopwatchbl"
-            android:title="Timer" />
-            -->
-
         <item
             android:id="@+id/nav_stopwatch"
             android:icon="@drawable/ic_stopwatchbl"

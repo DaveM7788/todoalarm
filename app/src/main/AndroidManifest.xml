@@ -18,11 +18,11 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/Theme.ToDoAlarm">
         <activity
             android:exported="true"
             android:name="com.davesprojects.dm.alarm.ui.MainActivity"
-            android:theme="@style/AppTheme">
+            android:theme="@style/Theme.ToDoAlarm">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -36,12 +36,12 @@
 
         <activity android:name="com.davesprojects.dm.alarm.ui.WakeUpActivity"
             android:exported="true"
-            android:theme="@style/AppTheme">
+            android:theme="@style/Theme.ToDoAlarm">
         </activity>
 
         <activity android:name="com.davesprojects.dm.alarm.ui.WakeUpIntermediate"
             android:exported="true"
-            android:theme="@style/AppTheme">
+            android:theme="@style/Theme.ToDoAlarm">
         </activity>
 
         <service android:name="com.davesprojects.dm.alarm.notifs.MusicAlarmSoundService"

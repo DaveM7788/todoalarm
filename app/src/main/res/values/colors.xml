@@ -1,9 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!--
-    <color name="colorPrimary">#FF212121</color>
-    <color name="colorPrimaryDark">#000000</color>
-    <color name="colorAccent">#3a7086</color> -->
+    <!-- to-do alarm colors -->
+    <color name="red_200">#FFEF9A9A</color>
+    <color name="red_400">#FFef5350</color>
+    <color name="red_500">#FFF44336</color>
+    <color name="red_700">#FFD32F2F</color>
+    <color name="red_900">#FFb71c1c</color>
+    <color name="blue_200">#FF90CAF9</color>
+    <color name="blue_400">#FF42A5F5</color>
+    <color name="blue_500">#FF2196f3</color>
+    <color name="blue_700">#FF1976d2</color>
+    <color name="blue_900">#FF0D47A1</color>
+    <color name="deep_purple_700">#FF512DA8</color>
+    <color name="deep_purple_500">#FF673AB7</color>
+    <color name="teal_700">#FF00796B</color>
+    <color name="teal_500">#FF009688</color>
+    <color name="red_status_bar">#520000</color>
+
+    <!-- general use colors -->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="dark_gray">#5B595B</color>
+    <color name="orange_warn">#ff6700 </color>
+    <color name="green_good">#00b300</color>
+    <color name="darker_gray">#424242</color>
+    <color name="gold_star">#cccc00</color>
+
     <!-- brand color: orange -->
     <color name="colorPrimary">#0066cc</color>
     <color name="colorPrimaryDark">#000033</color>
@@ -23,4 +45,14 @@
     <color name="colorPrimaryInverse">#000</color>
     <color name="colorPrimaryDarkInverse">#0f0</color>
     <color name="colorAccentInverse">#00f</color>
+
+    <!-- base theme colors  / for reference -->
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+
+    <color name="calendar_card_light">#F0F0F0</color>
+    <color name="calendar_card_dark">#424242</color>
 </resources>
+

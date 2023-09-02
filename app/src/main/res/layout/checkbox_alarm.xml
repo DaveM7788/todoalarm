@@ -3,15 +3,12 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
     <TimePicker
         android:id="@+id/time_select"
         android:timePickerMode="spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"/>
-
-
 
     <TextView
         android:layout_marginLeft="15dp"

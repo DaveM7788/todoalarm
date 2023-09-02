@@ -16,9 +16,7 @@
         app:tabMode="fixed"
         android:textAlignment="center"
         android:gravity="center"
-        app:tabMaxWidth="0dp"
-        app:tabTextColor="@color/colorPrimaryDark"
-        app:tabSelectedTextColor="@color/colorPrimary" />
+        app:tabMaxWidth="0dp" />
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewpager"

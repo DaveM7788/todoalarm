@@ -37,7 +37,6 @@
         <Button
             android:textStyle="bold"
             android:textSize="16sp"
-            android:textColor="@color/colorPrimary"
             android:layout_marginStart="8dp"
             android:text="@string/open"
             android:id="@+id/activeAlarmBtn"
