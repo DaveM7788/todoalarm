@@ -14,6 +14,7 @@
         android:layout_height="wrap_content">
 
         <TextView
+            android:textSize="16sp"
             android:id="@+id/textMonthPrev"
             android:textColor="@color/colorPrimary"
             app:layout_constraintTop_toTopOf="parent"
@@ -28,7 +29,6 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:textColor="#000"
             android:textSize="18sp"
             android:id="@+id/textMonth"
             android:layout_width="wrap_content"
@@ -42,6 +42,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:paddingEnd="8dp"
+            android:textSize="16sp"
             android:text="@string/next"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
@@ -50,7 +51,6 @@
 
 
     <com.github.sundeepk.compactcalendarview.CompactCalendarView
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/compactcalendar_view"
         android:layout_width="fill_parent"
         android:paddingRight="10dp"
