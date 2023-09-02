@@ -58,7 +58,10 @@ class AlarmReceiver : BroadcastReceiver() {
     private fun handleAlarmNotify(context: Context) {
         val serviceIntent = Intent(context, MusicAlarmSoundService::class.java)
 
-        if (Build.VERSION.SDK_INT >= 26) context.startForegroundService(serviceIntent)
-        else context.startService(serviceIntent)
+        if (Build.VERSION.SDK_INT >= 26) {
+            context.startForegroundService(serviceIntent)
+        } else {
+            context.startService(serviceIntent)
+        }
     }
 }

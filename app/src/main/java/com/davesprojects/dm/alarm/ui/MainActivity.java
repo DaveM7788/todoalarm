@@ -6,9 +6,13 @@ import static com.davesprojects.dm.alarm.util.UsefulConstKt.TIMER_FRAG;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+
+import android.app.AlarmManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import com.davesprojects.dm.alarm.util.PermissionsHelper;
@@ -25,6 +29,7 @@ import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.content.Intent;
+import android.widget.Toast;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -70,6 +75,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         permissionsHelper = new PermissionsHelper(getApplicationContext(), this);
         permissionsHelper.checkPermissions();
+
+        getAlarmPermissions();
     }
 
     public void defaultFrag() {
@@ -232,5 +239,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private boolean hasAlarmPermissions() {
+        if (Build.VERSION.SDK_INT >= 31) {
+            AlarmManager alarmManager =
+                    (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+            return alarmManager.canScheduleExactAlarms();
+        } else {
+            return true;
+        }
+    }
+
+    private void getAlarmPermissions() {
+        if (Build.VERSION.SDK_INT >= 31) {
+            if (!hasAlarmPermissions()) {
+                Toast.makeText(
+                        this, getString(R.string.please_allow_alarm), Toast.LENGTH_LONG
+                ).show();
+
+                startActivity(
+                        new Intent(android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM,
+                                Uri.parse("package:com.davesprojects.dm.alarm"))
+                );
+            }
+        }
     }
 }

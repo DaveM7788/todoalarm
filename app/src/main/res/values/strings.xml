@@ -17,6 +17,7 @@
     <string name="dialog_about">To-Do Alarm 7.0 by DavesProjects</string>
     <string name="action_about">About</string>
     <string name="timer_title">Timer Complete</string>
+    <string name="please_allow_alarm">Please allow exact alarm permissions</string>
 
     <!-- calendar -->
     <string name="cal_month_top">%1s %1s</string>
@@ -42,6 +43,7 @@
     <string name="explain_settings"> Please use the field
         below to set the name you wish to be greeted with every morning. If you do not
         wish to be greeted by name, just leave the field blank. </string>
+    <string name="please_allow_audio">Please allow audio permissions</string>
 
     <!-- notif -->
     <string name="channel_name">todo.alarm.channel.name</string>

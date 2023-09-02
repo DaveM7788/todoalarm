@@ -180,20 +180,26 @@ class MusicAlarmSoundService : Service() {
                     mp?.start()
                 }
             } catch (e: Exception) {
+                // fallback to normal alarm sound if music fails
+                playNormalAlarmSounds(context)
                 e.printStackTrace()
             }
         } else {
             // play an alarm sound! Wake up ; )
             // ensure ringer volume is maxed. Otherwise alarm won't make any sound if the
             // user has the phone on vibrate
-            val audio = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager?
-            currentVolume = audio!!.getStreamVolume(AudioManager.STREAM_RING)
-            val maxVolume = audio.getStreamMaxVolume(AudioManager.STREAM_RING)
-            audio.setStreamVolume(AudioManager.STREAM_RING, maxVolume, 0)
-            val uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
-            ringtone = RingtoneManager.getRingtone(context, uri)
-            ringtone?.play()
+            playNormalAlarmSounds(context)
         }
+    }
+
+    private fun playNormalAlarmSounds(context: Context) {
+        val audio = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager?
+        currentVolume = audio!!.getStreamVolume(AudioManager.STREAM_RING)
+        val maxVolume = audio.getStreamMaxVolume(AudioManager.STREAM_RING)
+        audio.setStreamVolume(AudioManager.STREAM_RING, maxVolume, 0)
+        val uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+        ringtone = RingtoneManager.getRingtone(context, uri)
+        ringtone?.play()
     }
 
     private fun stopAllSounds(context: Context) {

@@ -1,7 +1,10 @@
 package com.davesprojects.dm.alarm.ui
 
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
 import android.database.Cursor
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.Editable
@@ -13,6 +16,7 @@ import android.widget.*
 import android.widget.AdapterView.OnItemClickListener
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SwitchCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.davesprojects.dm.alarm.R
@@ -171,9 +175,36 @@ class SettingsFrag : Fragment(), View.OnClickListener {
         prefEditor.apply()
     }
 
+    private fun getReadAudioPermissions() {
+        if (Build.VERSION.SDK_INT >= 33) {
+            if (!hasAudioPermissions()) {
+                requestPermissions(
+                    arrayOf(Manifest.permission.READ_MEDIA_AUDIO), 9991
+                )
+            }
+        }
+    }
+
+    private fun hasAudioPermissions(): Boolean {
+        return if (Build.VERSION.SDK_INT >= 33) {
+            ContextCompat.checkSelfPermission(requireContext(),
+                Manifest.permission.READ_MEDIA_AUDIO) != PackageManager.PERMISSION_DENIED
+        } else {
+            true
+        }
+    }
+
     override fun onClick(view: View) {}
 
     private fun chooseSong() {
+        if (!hasAudioPermissions()) {
+            getReadAudioPermissions()
+            Toast.makeText(
+                requireContext(), getString(R.string.please_allow_audio), Toast.LENGTH_LONG
+            ).show()
+            return
+        }
+
         val selection = MediaStore.Audio.Media.IS_MUSIC + " != 0"
         val projection = arrayOf(
                 MediaStore.Audio.Media._ID,

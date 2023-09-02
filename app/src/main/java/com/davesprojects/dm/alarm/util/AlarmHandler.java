@@ -208,8 +208,13 @@ public class AlarmHandler {
             versionSetPendingIntentAlarm(timeForPending);
 
             if (alarmManager != null) {
-                alarmManager.setAlarmClock(
-                        new AlarmManager.AlarmClockInfo(timeForPending, pendingIntent), pendingIntent);
+                try {
+                    alarmManager.setAlarmClock(
+                            new AlarmManager.AlarmClockInfo(timeForPending, pendingIntent), pendingIntent);
+                } catch (Exception e) {
+                    // can throw if user goes to settings and turns off special alarm permission
+                    e.printStackTrace();
+                }
             }
         }
     }
