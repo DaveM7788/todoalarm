@@ -15,6 +15,7 @@ import android.os.Build
 import android.app.PendingIntent
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.media.Ringtone
@@ -109,6 +110,7 @@ class MusicAlarmSoundService : Service() {
             baseContext.resources,
             R.mipmap.ic_launcher
         )
+
         mBuilder = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(icon)
             .setContentTitle("To-Do Alarm")
@@ -118,11 +120,20 @@ class MusicAlarmSoundService : Service() {
             .addAction(R.drawable.ic_alarm_blue, "Open", pendingIntent)
             .setPriority(NotificationCompat.FLAG_ONGOING_EVENT)
             .setOngoing(true)
+            .setDeleteIntent(iEndPending)  // for user swiping to dismiss
             .setVibrate(vibrationPat)
             .setSound(defaultSoundUri)
             .setVisibility(VISIBILITY_PUBLIC)
             .setStyle(NotificationCompat.BigPictureStyle().bigPicture(iconBitmap))
-        startForeground(ALARM_NOTIFY_ID, mBuilder?.build())
+
+        if (Build.VERSION.SDK_INT >= 29) {
+            // Android 14 requires foreground services to have types
+            startForeground(
+                ALARM_NOTIFY_ID, mBuilder!!.build(), FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK
+            )
+        } else {
+            startForeground(ALARM_NOTIFY_ID, mBuilder!!.build())
+        }
     }
 
     private fun createNotificationChannel() {

@@ -114,16 +114,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     .addToBackStack("")
                     .replace(R.id.content_frame, new MixTodoCalFrag())
                     .commit();
-        } else if (lastFrag.equals(STOPWATCH_FRAG)) {
-            fragmentManager.beginTransaction()
-                    .addToBackStack("")
-                    .replace(R.id.content_frame, new StopwatchFrag())
-                    .commit();
-        } else if (lastFrag.equals(TIMER_FRAG)) {
-            fragmentManager.beginTransaction()
-                    .addToBackStack("")
-                    .replace(R.id.content_frame, new TimerFrag())
-                    .commit();
         } else if (lastFrag.equals("SettingsFrag")) {
             fragmentManager.beginTransaction()
                     .addToBackStack("")
@@ -225,20 +215,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     .addToBackStack("")
                     .replace(R.id.content_frame, new MixTodoCalFrag())
                     .commit();
-        } else if (id == R.id.nav_stopwatch) {
-            fragmentManager.beginTransaction()
-                    .addToBackStack("")
-                    .replace(R.id.content_frame, new StopwatchFrag())
-                    .commit();
         } else if (id == R.id.nav_settings) {
             fragmentManager.beginTransaction()
                     .addToBackStack("")
                     .replace(R.id.content_frame, new SettingsFrag())
-                    .commit();
-        } else if (id == R.id.nav_timer) {
-            fragmentManager.beginTransaction()
-                    .addToBackStack("")
-                    .replace(R.id.content_frame, new TimerFrag())
                     .commit();
         }
 
